@@ -2,6 +2,9 @@
 <resources>
 
     <string name="app_name">throughCode</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="dispositivosTextView">Dispositivos Encontrados</string>
+    <string name="conectarButton">Conectar</string>
+    <string name="logoImageDescription">throughCode</string>
+    <string name="helpDescription">Ayuda</string>
 
 </resources>

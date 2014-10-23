@@ -4,9 +4,58 @@
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/frameLayout1"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/dispositivosTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp" >
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/logoImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/logoImageDescription"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/dispositivosTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logoImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:text="@string/dispositivosTextView" />
+
+    <Button
+        android:id="@+id/conectarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/frameLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/conectarButton" />
+
+    <ImageButton
+        android:id="@+id/helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/frameLayout1"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="20dp"
+        android:contentDescription="@string/helpDescription"
+        android:src="@drawable/ic_launcher" />
 
 </RelativeLayout>
