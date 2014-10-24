@@ -28,16 +28,15 @@ public class Interfaz extends Activity {
 	    findViewById(R.id.rgbButton).setOnTouchListener(new MyTouchListener());
 	    findViewById(R.id.buzzerButton).setOnTouchListener(new MyTouchListener());
 	    
-	    findViewById(R.id.tableRow1).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow2).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow3).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow4).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow5).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow6).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow7).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow8).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow9).setOnDragListener(new MyDragListener());
-	    findViewById(R.id.tableRow10).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear1).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear2).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear3).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear4).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear5).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear6).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear7).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear8).setOnDragListener(new MyDragListener());
+	    findViewById(R.id.linear11).setOnDragListener(new MyDragListener());
 	    
 	}
 	
@@ -49,7 +48,9 @@ public class Interfaz extends Activity {
 		        view.startDrag(data, shadowBuilder, view, 0);
 		        view.setVisibility(View.INVISIBLE);
 		        return true;
-		      } else {
+		      } 
+		      
+		      else {
 		        return false;
 		      }
 		    }
