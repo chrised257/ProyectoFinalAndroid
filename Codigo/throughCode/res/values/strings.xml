@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">throughCode</string>
+    <string name="dispositivosTextView">Dispositivos Encontrados</string>
+    <string name="conectarButton">Conectar</string>
+    <string name="logoImageDescription">throughCode</string>
+    <string name="helpDescription">Ayuda</string>
+    <string name="title_activity_interfaz">Interfaz</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="enviar">Enviar</string>
+
+</resources>
