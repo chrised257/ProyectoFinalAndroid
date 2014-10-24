@@ -66,11 +66,13 @@ public class ConexionActivity extends Activity {
 		
 	}
 	
+}
+	
 	/*Clase para decodificar el envío 
 	 * y recibimiento de datos a través de Bluetooth
 	 */
 	
-	public class BluetoothDecoder {
+	/*public class BluetoothDecoder {
 		private BluetoothAdapter BA;
 		private Set<BluetoothDevice>pairedDevices;
 		
@@ -105,4 +107,4 @@ public class ConexionActivity extends Activity {
 		      Toast.LENGTH_LONG).show();
 		}
 	}
-}
+}*/
