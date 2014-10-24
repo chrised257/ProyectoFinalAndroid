@@ -2,30 +2,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#adcde6"
     tools:context="${relativePackage}.${activityClass}" >
 
     <TableLayout
+        android:id="@+id/tablaComandos"
         android:layout_width="250dp"
         android:layout_height="400dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true" >
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" >
 
         <TableRow
             android:id="@+id/tableRow1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content" 
+            android:background="#4a91ca" >
         </TableRow>
 
         <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="#5e9dd0" >
         </TableRow>
 
         <TableRow
             android:id="@+id/tableRow3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="#4a91ca" >
         </TableRow>
 
         <TableRow
@@ -37,7 +42,8 @@
         <TableRow
             android:id="@+id/tableRow5"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="#4a91ca" >
         </TableRow>
 
         <TableRow
@@ -72,6 +78,7 @@
     </TableLayout>
 
     <TableLayout
+        android:id="@+id/tablaBotones"
         android:layout_width="75dp"
         android:layout_height="400dp"
         android:layout_alignParentBottom="true"

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#adcde6"
     tools:context="${relativePackage}.${activityClass}" >
 
     <FrameLayout
@@ -18,12 +19,6 @@
             android:layout_height="wrap_content" >
         </ListView>
     </FrameLayout>
-
-    <ImageView
-        android:id="@+id/logoImageView"
-
-        android:contentDescription="@string/logoImageDescription"
-        android:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/dispositivosTextView"
@@ -53,5 +48,15 @@
         android:layout_marginLeft="20dp"
         android:contentDescription="@string/helpDescription"
         android:src="@drawable/ic_launcher" />
+
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="200dp"
+        android:layout_height="75dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/logoImageDescription"
+        android:scaleType="fitXY"
+        android:src="@drawable/logo" />
 
 </RelativeLayout>
