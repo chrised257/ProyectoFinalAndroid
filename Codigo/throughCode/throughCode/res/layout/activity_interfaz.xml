@@ -97,52 +97,46 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/comandos" />
-
                 <ImageView
                     android:id="@+id/frenteButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/frente" />
 
                 <ImageView
                     android:id="@+id/atrasButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/atras" />
 
                 <ImageView
                     android:id="@+id/derechaButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/derecha" />
 
                 <ImageView
                     android:id="@+id/izquierdaButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/izquierda" />
 
                 <ImageView
                     android:id="@+id/ledButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/led" />
 
                 <ImageView
                     android:id="@+id/rgbButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/rgb" />
 
                 <ImageView
                     android:id="@+id/buzzerButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/buzzer" />
 
             </LinearLayout>
@@ -158,5 +152,14 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/enviar" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_alignParentLeft="true"
+        android:text="@string/comandos"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>
