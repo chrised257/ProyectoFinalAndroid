@@ -1,8 +1,11 @@
 package mx.itesm.throughcode;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -12,6 +15,7 @@ import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
+
 
 public class Interfaz extends Activity {
 
@@ -40,8 +44,10 @@ public class Interfaz extends Activity {
 	    
 	}
 	
-	  private final class MyTouchListener implements OnTouchListener {
-		    public boolean onTouch(View view, MotionEvent motionEvent) {
+	  @SuppressLint("NewApi")
+	private final class MyTouchListener implements OnTouchListener {
+		    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+			public boolean onTouch(View view, MotionEvent motionEvent) {
 		      if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 		        ClipData data = ClipData.newPlainText("", "");
 		        DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
@@ -59,10 +65,10 @@ public class Interfaz extends Activity {
 	  class MyDragListener implements OnDragListener {
 		    Drawable enterShape = getResources().getDrawable(R.drawable.shape_droptarget);
 		    Drawable normalShape = getResources().getDrawable(R.drawable.shape);
+			private int action;
 
-		    @Override
 		    public boolean onDrag(View v, DragEvent event) {
-		      int action = event.getAction();
+		      action = event.getAction();
 		      switch (event.getAction()) {
 		      case DragEvent.ACTION_DRAG_STARTED:
 		        // do nothing
