@@ -2,6 +2,7 @@ package mx.itesm.throughcode;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.DragEvent;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class Interfaz extends Activity {
@@ -46,7 +48,7 @@ public class Interfaz extends Activity {
 		        ClipData data = ClipData.newPlainText("", "");
 		        DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 		        view.startDrag(data, shadowBuilder, view, 0);
-		        view.setVisibility(View.INVISIBLE);
+		        view.setVisibility(View.VISIBLE);
 		        return true;
 		      } 
 		      
@@ -65,7 +67,7 @@ public class Interfaz extends Activity {
 		      int action = event.getAction();
 		      switch (event.getAction()) {
 		      case DragEvent.ACTION_DRAG_STARTED:
-		        // do nothing
+		        // No hacer nada.
 		        break;
 		      case DragEvent.ACTION_DRAG_ENTERED:
 		        v.setBackgroundDrawable(enterShape);
@@ -76,10 +78,15 @@ public class Interfaz extends Activity {
 		      case DragEvent.ACTION_DROP:
 		        // Dropped, reassign View to ViewGroup
 		        View view = (View) event.getLocalState();
-		        ViewGroup owner = (ViewGroup) view.getParent();
-		        owner.removeView(view);
+		        //ViewGroup owner = (ViewGroup) view.getParent();
+		        //owner.removeView(view);
 		        LinearLayout container = (LinearLayout) v;
-		        container.addView(view);
+		        
+		        ImageView oldView = (ImageView) view;
+		        ImageView newView = new ImageView(getApplicationContext());
+		        newView.setImageBitmap(((BitmapDrawable) oldView.getDrawable()).getBitmap());
+		        
+		        container.addView(newView);
 		        view.setVisibility(View.VISIBLE);
 		        break;
 		      case DragEvent.ACTION_DRAG_ENDED:
