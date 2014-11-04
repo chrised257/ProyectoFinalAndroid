@@ -1,8 +1,12 @@
 package mx.itesm.throughcode;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.bluetooth.BluetoothSocket;
 import android.content.ClipData;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -10,17 +14,18 @@ import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 
-public class Interfaz extends Activity {
-
+@SuppressLint("ClickableViewAccessibility") public class Interfaz extends Activity {
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_interfaz);
 		
@@ -47,6 +52,7 @@ public class Interfaz extends Activity {
 	  @SuppressLint("NewApi")
 	private final class MyTouchListener implements OnTouchListener {
 		    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+		    
 			public boolean onTouch(View view, MotionEvent motionEvent) {
 		      if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 		        ClipData data = ClipData.newPlainText("", "");
@@ -69,16 +75,16 @@ public class Interfaz extends Activity {
 
 		    public boolean onDrag(View v, DragEvent event) {
 		      action = event.getAction();
-		      switch (event.getAction()) {
+		      switch (action) {
 		      case DragEvent.ACTION_DRAG_STARTED:
 		        // do nothing
 		        break;
-		      case DragEvent.ACTION_DRAG_ENTERED:
+		    /*  case DragEvent.ACTION_DRAG_ENTERED:
 		        v.setBackgroundDrawable(enterShape);
 		        break;
 		      case DragEvent.ACTION_DRAG_EXITED:
 		        v.setBackgroundDrawable(normalShape);
-		        break;
+		        break;*/
 		      case DragEvent.ACTION_DROP:
 		        // Dropped, reassign View to ViewGroup
 		        View view = (View) event.getLocalState();
@@ -86,14 +92,16 @@ public class Interfaz extends Activity {
 		        owner.removeView(view);
 		        LinearLayout container = (LinearLayout) v;
 		        container.addView(view);
+		        
 		        view.setVisibility(View.VISIBLE);
 		        break;
-		      case DragEvent.ACTION_DRAG_ENDED:
-		        v.setBackgroundDrawable(normalShape);
+		     /* case DragEvent.ACTION_DRAG_ENDED:
+		        v.setBackgroundDrawable(normalShape);*/
 		      default:
 		        break;
 		      }
 		      return true;
 		    }
 		  }
+	  
 }
