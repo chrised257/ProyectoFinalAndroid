@@ -44,7 +44,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,18 +58,38 @@ import android.widget.Toast;
 
 public class ConexionActivity extends Activity {
 
-	private String RobotName;									//Robot's name String
-	private Set<BluetoothDevice> pairedDevices;			//Aux. to save paired devices located at the phone 
-	private ListView devicesList;									//ListView to enlist founded devices
-	private ArrayList<String> list;								//Array String that saves the paired devices' names
+	private String RobotName;							   //Robot's name String
+	private Set<BluetoothDevice> pairedDevices;			   //Aux. to save paired devices located at the phone 
+	private ListView devicesList;						   //ListView to enlist founded devices
+	private ArrayList<String> list;						   //Array String that saves the paired devices' names
 	private Button conectar; 
 	
-	private BluetoothAdapter mBluetoothAdapter;		//Adapter for BT module
+	private BluetoothAdapter mBluetoothAdapter;		        //Adapter for BT module
 	private BluetoothSocket socket;							//Connection's socket
-	private InputStream is;											//InputStream
-	private OutputStream os;										//Output Stream for Bluetooth Connection
+	private InputStream is;								    //InputStream
+	private OutputStream os;								//Output Stream for Bluetooth Connection
 	private BroadcastReceiver btMonitor = null;
-	private boolean okConnection;								//Flag's connection
+	private boolean okConnection;							//Flag's connection
+	
+	//Getters and Setters section
+	public BluetoothAdapter getBluetoothAdapter(){
+		return this.mBluetoothAdapter;
+	}
+	
+	public BluetoothSocket getBluetoothSocket(){
+		return this.socket;
+	}
+	
+	public InputStream getInputStream(){
+		return this.is;
+	}
+	public OutputStream getOutputStream(){
+		return this.os;
+	}
+	public BroadcastReceiver getBroadcastReceiver(){
+		return this.btMonitor;
+	}
+	//End Getters and Setters section
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +103,7 @@ public class ConexionActivity extends Activity {
 		listDevices();  //List PairedDevices in a ListView
 		conectar.setEnabled(true); //Disables button before the connection
 		setupBTMonitor(); //Enables btMonitor to check the connection's state
+
 		
 				 OnItemClickListener robotListener = new OnItemClickListener(){
 						
@@ -101,14 +121,18 @@ public class ConexionActivity extends Activity {
 							}
 					};
 					
+					
 					OnClickListener registro = new OnClickListener(){
 						
 							public void onClick(View v){
+								handleConnected();
+								sendData("1");				
+								Log.i("ENVIANDO DATOS","ENVIE UN 1");
 								Intent intent = new Intent (ConexionActivity.this, Interfaz.class);
 								startActivity(intent);
 							}
 						};
-		
+						
 		conectar.setOnClickListener(registro);
 		devicesList.setOnItemClickListener(robotListener);
 	}
@@ -126,11 +150,7 @@ public class ConexionActivity extends Activity {
 				}
 				if (intent.getAction().equals(
 						"android.bluetooth.device.action.ACL_DISCONNECTED")) {
-						try {
-							socket.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						handleDisconnected();
 				}
 			}
 		};
@@ -143,12 +163,20 @@ public class ConexionActivity extends Activity {
 			is = socket.getInputStream();
 			os = socket.getOutputStream();
 			
-			sendData("1");
 			okConnection = true;
 		
 		} catch (Exception e) {
 			is = null;
 			os = null;
+		}
+	}
+	
+	private void handleDisconnected(){
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	/*
@@ -158,7 +186,6 @@ public class ConexionActivity extends Activity {
 		try {
 			if (okConnection)
 				os.write(Dato.getBytes());
-				os.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

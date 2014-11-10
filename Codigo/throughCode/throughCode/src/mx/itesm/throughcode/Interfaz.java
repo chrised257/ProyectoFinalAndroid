@@ -1,12 +1,9 @@
 package mx.itesm.throughcode;
 
-import java.io.IOException;
-import java.io.OutputStream;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.bluetooth.BluetoothSocket;
 import android.content.ClipData;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -21,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 
-@SuppressLint("ClickableViewAccessibility") public class Interfaz extends Activity {
+public class Interfaz extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +89,9 @@ import android.widget.LinearLayout;
 		        owner.removeView(view);
 		        LinearLayout container = (LinearLayout) v;
 		        container.addView(view);
-		        
 		        view.setVisibility(View.VISIBLE);
+		        
+		        
 		        break;
 		     /* case DragEvent.ACTION_DRAG_ENDED:
 		        v.setBackgroundDrawable(normalShape);*/
