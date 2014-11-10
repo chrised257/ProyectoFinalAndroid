@@ -97,6 +97,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/comandos" />
+                
                 <ImageView
                     android:id="@+id/frenteButton"
                     android:layout_width="50dp"
