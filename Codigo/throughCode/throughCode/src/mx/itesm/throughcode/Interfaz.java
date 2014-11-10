@@ -15,11 +15,11 @@ import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
-<<<<<<< HEAD
+
 import android.widget.ImageView;
-=======
+
 import android.view.ViewGroup;
->>>>>>> origin/Jesús
+
 import android.widget.LinearLayout;
 
 
