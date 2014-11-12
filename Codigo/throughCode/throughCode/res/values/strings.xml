@@ -10,5 +10,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="enviar">Enviar</string>
     <string name="comandos">Comandos</string>
+    <string name="instrucciones">Instrucciones</string>
 
 </resources>
