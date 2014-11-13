@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" >
-
+	
     <FrameLayout
         android:id="@+id/frameLayout1"
         android:layout_width="300dp"
@@ -51,10 +51,9 @@
         android:id="@+id/helpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/frameLayout1"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="18dp"
+        android:layout_toLeftOf="@+id/logoImageView"
         android:contentDescription="@string/helpDescription"
         android:src="@drawable/ic_launcher" />
 

@@ -34,13 +34,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -59,24 +52,29 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class ConexionActivity extends Activity {
-	ArrayAdapter<String> myAdapter;
+	
+	
+	private ListView devicesList;						   						//ListView to enlist founded devices
 
-	private String RobotName;							   //Robot's name String
-	private Set<BluetoothDevice> pairedDevices;			   //Aux. to save paired devices located at the phone 
-	private ListView devicesList;						   //ListView to enlist founded devices
-	private ArrayList<String> list;						   //Array String that saves the paired devices' names
 	private Button conectar; 
+	private ImageButton informacion;
 	
 	private BluetoothAdapter mBluetoothAdapter;		        //Adapter for BT module
-	private BluetoothSocket socket;							//Connection's socket
-	private InputStream is;								    //InputStream
-	private OutputStream os;								//Output Stream for BT Connection
+	private BluetoothSocket socket;										//Connection's socket
+	private InputStream is;								    						//InputStream
+	private OutputStream os;													//Output Stream for BT Connection
 	private BroadcastReceiver btMonitor = null;
-	private boolean okConnection;							//Flag's connection
+	private boolean okConnection;										//Flag's connection
+	private String RobotName;							   						//Robot's name String
+	private Set<BluetoothDevice> pairedDevices;			   	//Aux. to save paired devices located at the phone 
+	private ArrayList<String> list;						   						//Array String that saves the paired devices' names
+	ArrayAdapter<String> myAdapter;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +83,8 @@ public class ConexionActivity extends Activity {
 		
 		conectar = (Button) findViewById(R.id.conectarButton);
 		devicesList = (ListView)findViewById(R.id.listView1);
-
+		informacion = (ImageButton)findViewById(R.id.helpButton);
+		
 		onBluetooth(); //Turn on BT when it's turned off
 		listDevices();  //List PairedDevices in a ListView
 		conectar.setEnabled(true); //Disables button before the connection
@@ -263,7 +262,7 @@ public class ConexionActivity extends Activity {
 						
 								@Override
 								protected Boolean doInBackground(Void... params) {
-									// TODO Auto-generated method stub
+		
 									findRobot();
 									
 									return true;
