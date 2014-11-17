@@ -5,23 +5,26 @@ public class Instruccion {
 	private int id;
 	private String comando;
 	private float duracion;
-	private float val1;
-	private float val2;
+	private float frecuencia;
+	private float intensidad;
+	private boolean activacion = false;
 	
 	//Constructores
-	public Instruccion(int id, String comando, float duracion, float val1, float val2){
+	public Instruccion(int id, String comando, float duracion, float frecuencia, float intensidad, boolean activacion){
 		this.id = id;
 		this.comando = comando;
 		this.duracion = duracion;
-		this.val1 = val1;
-		this.val2 = val2;
+		this.frecuencia = frecuencia;
+		this.intensidad = intensidad;
+		this.activacion = activacion;
 	}
 	
-	public Instruccion(String comando, float duracion, float val1, float val2){
+	public Instruccion(String comando, float duracion, float frecuencia, float intensidad, boolean activacion){
 		this.comando = comando;
 		this.duracion = duracion;
-		this.val1 = val1;
-		this.val2 = val2;
+		this.frecuencia = frecuencia;
+		this.intensidad = intensidad;
+		this.activacion = activacion;
 	}
 	
 	public Instruccion(int id, String comando, float duracion){
@@ -51,12 +54,16 @@ public class Instruccion {
 		this.duracion = duracion;
 	}
 	
-	public void setVal1(float val1){
-		this.val1 = val1;
+	public void setFrecuencia(float frecuencia){
+		this.frecuencia = frecuencia;
 	}
 	
-	public void setVal2(float val2){
-		this.val2 = val2;
+	public void setIntensidad(float intensidad){
+		this.intensidad = intensidad;
+	}
+	
+	public void setActivacion(boolean activacion){
+		this.activacion = activacion;
 	}
 	
 	//Getters
@@ -72,11 +79,15 @@ public class Instruccion {
 		return this.duracion;
 	}
 	
-	public float getVal1(){
-		return this.val1;
+	public float getFrecuencia(){
+		return this.frecuencia;
 	}
 	
-	public float getVal2(){
-		return this.val2;
+	public float getIntensidad(){
+		return this.intensidad;
+	}
+	
+	public boolean getActivacion(){
+		return this.activacion;
 	}
 }
