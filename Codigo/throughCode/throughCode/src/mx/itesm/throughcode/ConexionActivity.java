@@ -20,6 +20,7 @@
  *
  * ITESM representatives
  * Ing. Martha Sordia Salinas <msordia@itesm.mx>
+ * Ing. Mario Isidro de la Fuente Martínez <mario.delafuente@itesm.mx>
  *
  * ITESM students
  * Christian Eduardo Rodriguez Palacios <christian.2500@hotmail.com>
