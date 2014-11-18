@@ -30,8 +30,6 @@
 
 package mx.itesm.throughcode;
 
-
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -72,24 +70,23 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
 public class Interfaz extends Activity {
 	
 	/*PARA EL BLUETOOTH*/
-	private BluetoothAdapter mBluetoothAdapter;		        //Adapter for BT module
-	private BluetoothSocket socket;										//Connection's socket
-	private InputStream is;								    						//InputStream
-	private OutputStream os;													//Output Stream for BT Connection
+	private BluetoothAdapter mBluetoothAdapter;	//Adapter for BT module
+	private BluetoothSocket socket;	//Connection's socket
+	private InputStream is;	//InputStream
+	private OutputStream os;	//Output Stream for BT Connection
 	private BroadcastReceiver btMonitor = null;
-	private boolean okConnection;										//Flag's connection
-	private String RobotName;							   						//Robot's name String
-	private Set<BluetoothDevice> pairedDevices;			   	//Aux. to save paired devices located at the phone 
-	private ArrayList<String> list;						   						//Array String that saves the paired devices' names
+	private boolean okConnection;	//Flag's connection
+	private String RobotName;	//Robot's name String
+	private Set<BluetoothDevice> pairedDevices;	//Aux. to save paired devices located at the phone 
+	private ArrayList<String> list;	//Array String that saves the paired devices' names
 	ArrayAdapter<String> myAdapter;
 	private ListView devicesList;
 	boolean searchDevices = false;
-	List<ImageView> instruccionesList;									//List that saves each command dragged
-	 CommandsAdapter  sendAdaptador;
+	List<ImageView> instruccionesList;	//List that saves each command dragged
+	CommandsAdapter  sendAdaptador;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,15 +94,14 @@ public class Interfaz extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_interfaz);
 		
-	   ListView myCommandList = (ListView)findViewById(R.id.listView1);
-	   ListView listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
-	   devicesList = (ListView)findViewById(R.id.listDevices);
+		ListView myCommandList = (ListView)findViewById(R.id.listView1);
+		ListView listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
+		devicesList = (ListView)findViewById(R.id.listDevices);
 	   
-	   instruccionesList = new ArrayList<ImageView>();//INICIALIZANDO LISTA DE INSTRUCCIONES
-	   ImageView imagen = new ImageView(this);
-	   instruccionesList.add(imagen);
-	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
-			   										R.layout.row_comandos, instruccionesList);
+		instruccionesList = new ArrayList<ImageView>();//INICIALIZANDO LISTA DE INSTRUCCIONES
+		ImageView imagen = new ImageView(this);
+		instruccionesList.add(imagen);
+	    sendAdaptador = new CommandsAdapter(getApplicationContext(), R.layout.row_comandos, instruccionesList);
 	    
 	    OnDragListener evento = new OnDragListener() {
 			
@@ -116,69 +112,63 @@ public class Interfaz extends Activity {
 			}
 		};
 	    
-		listCommandsToSend.setOnDragListener(evento);
+		//listCommandsToSend.setOnDragListener(evento);
+		listCommandsToSend.setOnDragListener(new MyDragListener());
 		
-	   final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(),
-			   								R.layout.row_comandos,getDataForListView(Interfaz.this));
+		final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(), R.layout.row_comandos,getDataForListView(Interfaz.this));
 	   
-	   						onBluetooth(); //Turn on BT when it's turned off
-	   						listDevices();  //List PairedDevices in a ListView
-	   						setupBTMonitor(); //Enables btMonitor to check the connection's state
-	   						devicesList.setVisibility(ListView.INVISIBLE);
-		
-				 OnItemClickListener robotListener = new OnItemClickListener(){
+	   	onBluetooth(); //Turn on BT when it's turned off
+	   	listDevices();  //List PairedDevices in a ListView
+	   	setupBTMonitor(); //Enables btMonitor to check the connection's state
+	   	devicesList.setVisibility(ListView.INVISIBLE);
+	   	
+		OnItemClickListener robotListener = new OnItemClickListener(){
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// TODO Auto-generated method stub
+								
+				RobotName = list.get(position).toString();
+								
+				//Asynchronous thread for Bluetooth Connection
+				AsyncBluetoothConnection connect = new AsyncBluetoothConnection();  //Find Robot's name between devices
+				connect.execute();
+								
+			}
 						
-							@Override
-							public void onItemClick(AdapterView<?> parent, View view,
-									int position, long id) {
-								// TODO Auto-generated method stub
-								
-								RobotName = list.get(position).toString();
-								
-								//Asynchronous thread for Bluetooth Connection
-								AsyncBluetoothConnection connect = new AsyncBluetoothConnection();  //Find Robot's name between devices
-								connect.execute();
-								
-							}
-						
-					};
+		};
 	  
-				   OnItemClickListener seleccion = new OnItemClickListener(){
+		OnItemClickListener seleccion = new OnItemClickListener(){
 			
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id) {
-							view.setOnTouchListener(new MyTouchListener());
-					    	Toast.makeText(Interfaz.this,  "Comando seleccionado" , Toast.LENGTH_SHORT).show();				
-						}
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				view.setOnTouchListener(new MyTouchListener());
+				Toast.makeText(Interfaz.this,  "Comando seleccionado" , Toast.LENGTH_SHORT).show();				
+			}
 			       	
-			       };
+		};
 			       
-				   OnItemClickListener envio = new OnItemClickListener(){
+		OnItemClickListener envio = new OnItemClickListener(){
 			
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id) {
-					    	Toast.makeText(Interfaz.this, "Comando por enviar",  Toast.LENGTH_SHORT).show();				
-						}
-			       	
-			       };
-       
-       listCommandsToSend.setOnItemClickListener(envio);
-       listCommandsToSend.setAdapter(sendAdaptador);
-       
-       myCommandList.setOnItemClickListener(seleccion);
-       myCommandList.setAdapter(miAdaptador);
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Toast.makeText(Interfaz.this, "Comando por enviar",  Toast.LENGTH_SHORT).show();				
+			}       	
+		};
+		
+		listCommandsToSend.setOnItemClickListener(envio);
+		listCommandsToSend.setAdapter(sendAdaptador);
+		
+		myCommandList.setOnItemClickListener(seleccion);
+		myCommandList.setAdapter(miAdaptador);
 	    
-       devicesList.setOnItemClickListener(robotListener);
+		devicesList.setOnItemClickListener(robotListener);
        
-       //LISTENERS QUE ESTABAN
- 	  // findViewById(R.layout.row_comandos).setOnTouchListener(new MyTouchListener());
- 	  //findViewById(R.id.linear1).setOnDragListener(new MyDragListener());
+		//LISTENERS QUE ESTABAN
+		//findViewById(R.layout.row_comandos).setOnTouchListener(new MyTouchListener());
+		//findViewById(R.id.linear1).setOnDragListener(new MyDragListener());
 	}
 	
-	
-	 public List<ImageView> getDataForListView(Context context)
+	public List<ImageView> getDataForListView(Context context)
      {
      	ImageView comando;
      	List<ImageView> listCommands = new ArrayList<ImageView>();
@@ -215,63 +205,62 @@ public class Interfaz extends Activity {
      }
 	
 	private final class MyTouchListener implements OnTouchListener {
-		    
-			public boolean onTouch(View view, MotionEvent motionEvent) {
-		     
-				    	if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-						       
-				    			ClipData data = ClipData.newPlainText("", "");
-						        DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-						        view.startDrag(data, shadowBuilder, view, 0);
-						        view.setVisibility(View.VISIBLE);
-						        
-				        return true;
-				      } 
-				      
-				      else {
-				        return false;
-				      }
-		    	}
-		 }
+		
+		public boolean onTouch(View view, MotionEvent motionEvent) {
+			
+			if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+				ClipData data = ClipData.newPlainText("", "");
+				DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+				view.startDrag(data, shadowBuilder, view, 0);
+				view.setVisibility(View.VISIBLE);
+				
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
 	  
-	  class MyDragListener implements OnDragListener {
+	public class MyDragListener implements OnDragListener {
 
 			private int action;
 
 		    public boolean onDrag(View v, DragEvent event) {
-		      action = event.getAction();
-		      switch (action) {
-		      case DragEvent.ACTION_DRAG_STARTED:
-		        // No hacer nada.
-		        break;
-		    /*  case DragEvent.ACTION_DRAG_ENTERED:
-		        v.setBackgroundDrawable(enterShape);
-		        break;
-		      case DragEvent.ACTION_DRAG_EXITED:
-		        v.setBackgroundDrawable(normalShape);
-		        break;*/
-		      case DragEvent.ACTION_DROP:
-		        // Dropped, reassign View to ViewGroup
-		        View view = (View) event.getLocalState();
-		        //ViewGroup owner = (ViewGroup) view.getParent();
-		        //owner.removeView(view);
-		       
-		        ListView container = (ListView) v;
-		        
-		        ImageView oldView = (ImageView) view;
-		        ImageView newView = new ImageView(getApplicationContext());
-		        newView.setImageBitmap(((BitmapDrawable) oldView.getDrawable()).getBitmap());
-		        
-		        instruccionesList.add(newView);
-		        sendAdaptador.notifyDataSetChanged();
-		        view.setVisibility(View.VISIBLE);
-
-		        
-		        break;
-		     /* case DragEvent.ACTION_DRAG_ENDED:
+		    	action = event.getAction();
+		    	
+		    	switch (action) {
+		    	
+		    	case DragEvent.ACTION_DRAG_STARTED:
+		    		// No hacer nada.
+		    		break;
+		    	/*case DragEvent.ACTION_DRAG_ENTERED:
+		        	v.setBackgroundDrawable(enterShape);
+		        	break;
+				case DragEvent.ACTION_DRAG_EXITED:
+		        	v.setBackgroundDrawable(normalShape);
+		        	break;*/
+		    	case DragEvent.ACTION_DROP:
+			        // Dropped, reassign View to ViewGroup
+			        View view = (View) event.getLocalState();
+			        //ViewGroup owner = (ViewGroup) view.getParent();
+			        //owner.removeView(view);
+			       
+			        //ListView container = (ListView) v;
+			        
+			        ImageView oldView = (ImageView) view;
+			        ImageView newView = new ImageView(getApplicationContext());
+			        newView.setImageBitmap(((BitmapDrawable) oldView.getDrawable()).getBitmap());
+			        
+			        instruccionesList.add(newView);
+			        sendAdaptador.notifyDataSetChanged();
+			        view.setVisibility(View.VISIBLE);
+			        
+			        break;
+			    /*case DragEvent.ACTION_DRAG_ENDED:
 		        v.setBackgroundDrawable(normalShape);*/
-		      default:
-		        break;
+			    default:
+			    	break;
 		      }
 		      return true;
 		    }
