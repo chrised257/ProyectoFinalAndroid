@@ -72,7 +72,7 @@ public class ConexionActivity extends Activity {
 	private BroadcastReceiver btMonitor = null;
 	private boolean okConnection;										//Flag's connection
 	private String RobotName;							   						//Robot's name String
-	private Set<BluetoothDevice> pairedDevices;			   	//Aux. to save paired devices located at the phone 
+	private Set<BluetoothDevice> pairedDevices;			   	//Aux. to save paired devices located at the phone
 	private ArrayList<String> list;						   						//Array String that saves the paired devices' names
 	ArrayAdapter<String> myAdapter;
 
@@ -88,7 +88,6 @@ public class ConexionActivity extends Activity {
 		
 		onBluetooth(); //Turn on BT when it's turned off
 		listDevices();  //List PairedDevices in a ListView
-		conectar.setEnabled(true); //Disables button before the connection
 		setupBTMonitor(); //Enables btMonitor to check the connection's state
 
 		
@@ -100,6 +99,11 @@ public class ConexionActivity extends Activity {
 								// TODO Auto-generated method stub
 								
 								RobotName = list.get(position).toString();
+								devicesList.setSelection(position);
+								Toast.makeText(ConexionActivity.this, RobotName + "was selected", Toast.LENGTH_SHORT).show();
+								
+								Intent intent = new Intent(ConexionActivity.this,Interfaz.class);
+								intent.putExtra("RobotName", RobotName);//Intent con String que contiene el nombre del Robot a conectar.
 								
 								//Asynchronous thread for Bluetooth Connection
 								AsyncBluetoothConnection connect = new AsyncBluetoothConnection();  //Find Robot's name between devices
@@ -123,6 +127,43 @@ public class ConexionActivity extends Activity {
 		conectar.setOnClickListener(registro);
 		devicesList.setOnItemClickListener(robotListener);
 	}
+	
+			/*
+			 * If there is no BT, it makes a toast. If there is BT enables an intent to turn it on
+			 */
+			
+			private void onBluetooth(){
+				mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+				if (mBluetoothAdapter == null) {
+				    Toast.makeText(getApplicationContext(), "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
+				}
+				if (!mBluetoothAdapter.isEnabled()) {
+				    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				    startActivityForResult(enableBtIntent,1);
+				}
+			}
+			
+			/*
+			 * List the paired devices  in the phone and show them in a ListView
+			 */
+			private void listDevices(){
+				pairedDevices = mBluetoothAdapter.getBondedDevices();
+				
+				list = new ArrayList<String>();
+				// If there are paired devices
+				if (pairedDevices.size() > 0) {
+				    // Loop through paired devices
+				    for (BluetoothDevice device : pairedDevices) {
+				        //list.add(device.getName() + "\n" + device.getAddress());
+				    	list.add(device.getName());
+				    }
+				    Toast.makeText(getApplicationContext(), "Showing Paired Devices",
+				    						Toast.LENGTH_SHORT).show();
+				    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				    									R.layout.row_list_paired_devices,list);
+				    devicesList.setAdapter(adapter);
+				}
+			}
 	
 	/*
 	 * Function that creates the interface to know BT has connected successfully
@@ -179,43 +220,9 @@ public class ConexionActivity extends Activity {
 		}
 	}
 	
-	/*
-	 * If there is no BT, it makes a toast. If there is BT enables an intent to turn it on
-	 */
 	
-	private void onBluetooth(){
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		if (mBluetoothAdapter == null) {
-		    Toast.makeText(getApplicationContext(), "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
-		}
-		if (!mBluetoothAdapter.isEnabled()) {
-		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-		    startActivityForResult(enableBtIntent,1);
-		}
-	}
 	
-	/*
-	 * List the paired devices  in the phone and show them in a ListView
-	 */
-	private void listDevices(){
-		pairedDevices = mBluetoothAdapter.getBondedDevices();
-		
-		list = new ArrayList<String>();
-		// If there are paired devices
-		if (pairedDevices.size() > 0) {
-		    // Loop through paired devices
-		    for (BluetoothDevice device : pairedDevices) {
-		        //list.add(device.getName() + "\n" + device.getAddress());
-		    	list.add(device.getName());
-		    }
-		    Toast.makeText(getApplicationContext(), "Showing Paired Devices",
-		    						Toast.LENGTH_SHORT).show();
-		    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-		    									R.layout.row_list_paired_devices,list);
-		    devicesList.setAdapter(adapter);
-		}
-	}
-	
+	///Parte en el otro codigo de INTERFAZ DE AQUI PARA ABAJO
 	/*
 	 * Find Robot between all pairedDevices
 	 */

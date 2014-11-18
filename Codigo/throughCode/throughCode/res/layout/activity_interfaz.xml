@@ -76,12 +76,4 @@
         android:layout_alignParentTop="true"
         android:text="@string/enviar" />
 
-    <ListView
-        android:id="@+id/listDevices"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:visibility="invisible" >
-
-    </ListView>
-
 </RelativeLayout>
