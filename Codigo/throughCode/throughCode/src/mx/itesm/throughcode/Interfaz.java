@@ -60,13 +60,14 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
-import android.view.View.OnDragListener;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -78,19 +79,18 @@ public class Interfaz extends Activity {
 	 ListView listCommandsToSend;
 	 
 	/*PARA EL BLUETOOTH*/
-	private BluetoothAdapter mBluetoothAdapter;		        //Adapter for BT module
-	private BluetoothSocket socket;										//Connection's socket
+	private BluetoothAdapter mBluetoothAdapter;		        //Adaptador de módulo BT
+	private BluetoothSocket socket;										//Socket de conexión
 	private InputStream is;								    						//InputStream
 	private OutputStream os;													//Output Stream for BT Connection
-	private BroadcastReceiver btMonitor = null;
-	private boolean okConnection;										//Flag's connection
-	private String RobotName;							   						//Robot's name String
-	private Set<BluetoothDevice> pairedDevices;			   	//Aux. to save paired devices located at the phone 
-	private ArrayList<String> list;						   						//Array String that saves the paired devices' names
-	ArrayAdapter<String> myAdapter;
+	private BroadcastReceiver btMonitor = null;					//Monitor que escucha todos los eventos Bluetooth
+	private boolean okConnection;										//Bandera de conexión establecida 1: si  ; 0:no
+	private String RobotName;							   						//String del nombre del Robot
+	private Set<BluetoothDevice> pairedDevices;			   	//Auxiliar para guardar los objetos Bluetooth device de los dispositivos pareados
+	private ArrayList<String> list;						   						//Array String que guarda los nombres de los dispositivos pareados
 	boolean searchDevices = false;
-	 CommandsAdapter  sendAdaptador;
-	List<ImageView> instruccionesList;
+	 CommandsAdapter  sendAdaptador;									//Adaptador del ListView para los comandos a enviar
+	List<ImageView> listCommands;									//List donde están las instrucciones a enviar.
 	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,29 +98,39 @@ public class Interfaz extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_interfaz);
 		
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+		//Para conectarse con el otro dispositivo
+		Bundle datos = getIntent().getExtras();
+		 RobotName = (String) datos.get("nombreRobot");
+		Toast.makeText(getApplicationContext(), "Conectando a " + RobotName + "...", Toast.LENGTH_SHORT).show();
+		 //Asynchronous thread for Bluetooth Connection
+			AsyncBluetoothConnection connect = new AsyncBluetoothConnection();  //Find Robot's name between devices
+			connect.execute();
+		 
+			setupBTMonitor(); //Enables btMonitor to check the connection's state
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+			
 	   myCommandList = (ListView)findViewById(R.id.listView1);
 	   listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
+	   Button enviar = (Button)findViewById(R.id.button1);
 	   
-	   instruccionesList = new ArrayList<ImageView>();//INICIALIZANDO LISTA DE INSTRUCCIONES
-	   ImageView imagen = new ImageView(this);
-	   instruccionesList.add(imagen);
 	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
-			   										R.layout.row_comandos, instruccionesList);
-	    
-	    OnDragListener evento = new OnDragListener() {
-			
-			@Override
-			public boolean onDrag(View v, DragEvent event) {
-				Toast.makeText(Interfaz.this,"Solté...",Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		};
-	    
-		listCommandsToSend.setOnDragListener(evento);
+			   										R.layout.row_comandos, getDataForInstruccionList(getApplicationContext()));
 		
 	   final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(),
 			   								R.layout.row_comandos,getDataForListView(Interfaz.this));
-		
+					
+	   			enviar.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						ImageView view = new ImageView(getApplicationContext());
+						view.setBackgroundResource(R.drawable.buzzer);
+						
+						listCommands.add(view);
+						sendAdaptador.notifyDataSetChanged();
+					}
+				});
 				   OnItemClickListener seleccion = new OnItemClickListener(){
 			
 						@Override
@@ -141,9 +151,11 @@ public class Interfaz extends Activity {
 						}
 			       	
 			       };
-       
+			       
+				
        listCommandsToSend.setOnItemClickListener(envio);
        listCommandsToSend.setAdapter(sendAdaptador);
+       listCommandsToSend.setOnDragListener(new MyDragListener());
        
        myCommandList.setOnItemClickListener(seleccion);
        myCommandList.setAdapter(miAdaptador);
@@ -185,7 +197,19 @@ public class Interfaz extends Activity {
      	
      	return listCommands;
      }
-	
+	 public List<ImageView> getDataForInstruccionList(Context context)
+     {
+     	ImageView comando;
+     	 listCommands = new ArrayList<ImageView>();
+     	for(int i = 0; i < 30; i++)
+     	{
+     		comando = new ImageView(context);
+         	comando.setImageResource(R.drawable.ic_launcher);
+         	listCommands.add(comando);
+     	}
+     	
+     	return listCommands;
+     }	
 	private final class MyTouchListener implements OnTouchListener {
 		    
 			public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -195,7 +219,7 @@ public class Interfaz extends Activity {
 				    			ClipData data = ClipData.newPlainText("", "");
 						        DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 						        view.startDrag(data, shadowBuilder, view, 0);
-						        view.setVisibility(View.VISIBLE);
+						        view.setVisibility(View.INVISIBLE);
 						        
 				        return true;
 				      } 
@@ -206,7 +230,7 @@ public class Interfaz extends Activity {
 		    	}
 		 }
 	  
-	  class MyDragListener implements OnDragListener {
+	  class MyDragListener implements View.OnDragListener {
 
 			private int action;
 
@@ -214,34 +238,37 @@ public class Interfaz extends Activity {
 		      action = event.getAction();
 		      switch (action) {
 		      case DragEvent.ACTION_DRAG_STARTED:
-		    	  Log.d("ACTION_DRAG_STARTED", "Empecé mi acción de drag");
+		    	  		Log.d("ACTION_DRAG_STARTED", "Empecé mi acción de drag");
 		        break;
 		      case DragEvent.ACTION_DRAG_ENTERED:
-		    	  Log.d("ACTION_DRAG_ENTERED", "Entré a mi acción de drag.");
+		    	  		Log.d("ACTION_DRAG_ENTERED", "Entré a mi acción de drag.");
 		        break;
 		      case DragEvent.ACTION_DRAG_EXITED:
-		    	  Log.d("ACTION_DRAG_EXITED", "Salí de mi acción de drag.");
+		    	  		Log.d("ACTION_DRAG_EXITED", "Salí de mi acción de drag.");
 		        break;
 		      case DragEvent.ACTION_DROP:
-		        // Dropped, reassign View to ViewGroup
-		        View view = (View) event.getLocalState();
-		        ViewGroup owner = (ViewGroup) view.getParent();
-		        //owner.removeView(view);
-		       
-		        ListView container = (ListView) v;
-		        
-		        ImageView oldView = (ImageView) view;
-		        ImageView newView = new ImageView(getApplicationContext());
-		        newView.setImageBitmap(((BitmapDrawable) oldView.getDrawable()).getBitmap());
-		        
-		        instruccionesList.add(newView);
-		        sendAdaptador.notifyDataSetChanged();
-		        view.setVisibility(View.VISIBLE);
-
-		        
+					        /////////////////////////////////////
+					    	////SECCION DEL DRAG AND DROP////
+					    	////////////////////////////////////
+		    	  			
+				    	  // Dropped, reassign View to ViewGroup
+				          View view = (View) event.getLocalState();
+				          //ViewGroup owner = (ViewGroup) view.getParent();
+				          //owner.removeView(view);
+				          //LinearLayout container = (LinearLayout) v;
+				          //container.addView(view);
+				          
+				          ImageView oldView = (ImageView) view;
+					      ImageView newView = new ImageView(getApplicationContext());
+					      newView.setImageBitmap(((BitmapDrawable) oldView.getDrawable()).getBitmap());
+				          
+					      listCommands.add(newView);
+					      sendAdaptador.notifyDataSetChanged();
+					      
+				          view.setVisibility(View.VISIBLE);
 		        break;
 		      case DragEvent.ACTION_DRAG_ENDED:
-		    	  	Log.d("ACTION_DRAG_ENDED", "Terminé de mover mi objeto.");
+		    	  		Log.d("ACTION_DRAG_ENDED", "Terminé de mover mi objeto.");
 		      default:
 		        break;
 		      }
@@ -279,6 +306,62 @@ public class Interfaz extends Activity {
 	  /*///////////////////////////////////////////////////////////////
 	   * EMPIEZA CÓDIGO DEL BLUETOOTH PARA REALIZAR LA CONEXIÓN.///
 	   *///////////////////////////////////////////////////////////////
+	  
+	  /*
+		 * Function that creates the interface to know BT has connected successfully
+		 */
+		private void setupBTMonitor() {
+			btMonitor = new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					if (intent.getAction().equals(
+							"android.bluetooth.device.action.ACL_CONNECTED")) {
+						handleConnected();
+					}
+					if (intent.getAction().equals(
+							"android.bluetooth.device.action.ACL_DISCONNECTED")) {
+							handleDisconnected();
+					}
+				}
+			};
+		}
+	/*
+	 * When  devices are connected (Devices are now really connected)
+	 */
+		private void handleConnected() {
+			try {
+				is = socket.getInputStream();
+				os = socket.getOutputStream();
+				
+				okConnection = true;
+			
+			} catch (Exception e) {
+				is = null;
+				os = null;
+			}
+		}
+		
+		private void handleDisconnected(){
+			try {
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		/*
+		 * Function that sends data to the Robot
+		 */
+		void sendData(String Dato) {
+			try {
+				if (okConnection)
+					os.write(Dato.getBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	  
 	  /*
 		 * Find Robot between all pairedDevices

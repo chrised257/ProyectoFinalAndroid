@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textAlignment="center"
-    android:textAppearance="?android:attr/textAppearanceSmallPopupMenu"
-    android:textSize="@dimen/abc_dropdownitem_icon_width" 
-    android:textColor="#00ff00">
+    android:orientation="horizontal" >
 
-</TextView>
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
 
+</LinearLayout>
