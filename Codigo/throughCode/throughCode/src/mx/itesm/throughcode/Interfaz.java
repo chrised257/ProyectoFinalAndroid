@@ -90,7 +90,7 @@ public class Interfaz extends Activity {
 	private ArrayList<String> list;						   						//Array String que guarda los nombres de los dispositivos pareados
 	boolean searchDevices = false;
 	 CommandsAdapter  sendAdaptador;									//Adaptador del ListView para los comandos a enviar
-	List<ImageView> listCommands;									//List donde están las instrucciones a enviar.
+	List<ImageView> instruccionesList;									//List donde están las instrucciones a enviar.
 	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,34 +114,66 @@ public class Interfaz extends Activity {
 	   listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
 	   Button enviar = (Button)findViewById(R.id.button1);
 	   
-	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
-			   										R.layout.row_comandos, getDataForInstruccionList(getApplicationContext()));
-		
 	   final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(),
-			   								R.layout.row_comandos,getDataForListView(Interfaz.this));
+					R.layout.row_comandos,getDataForListView(Interfaz.this));
+	   
+	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
+			   										R.layout.row_comandos, instruccionesList);
 					
+	   //Listener para botón enviar
 	   			enviar.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						ImageView view = new ImageView(getApplicationContext());
-						view.setBackgroundResource(R.drawable.buzzer);
-						
-						listCommands.add(view);
-						sendAdaptador.notifyDataSetChanged();
+				
 					}
 				});
+	   			
+	   	//Listener para lista de comandos disponibles
 				   OnItemClickListener seleccion = new OnItemClickListener(){
 			
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view,
 								int position, long id) {
-							view.setOnTouchListener(new MyTouchListener());
-					    	Toast.makeText(Interfaz.this,  "Comando seleccionado" , Toast.LENGTH_SHORT).show();				
+							//view.setOnTouchListener(new MyTouchListener());
+					    	
+							ImageView addedView = new ImageView(getApplicationContext());
+							
+							switch(position)
+							{
+							case 0:
+												addedView.setImageResource(R.drawable.frente);
+										break;
+							case 1:
+												addedView.setImageResource(R.drawable.atras);
+										break;
+							case 2:
+												addedView.setImageResource(R.drawable.izquierda);
+										break;
+							case 3:
+												addedView.setImageResource(R.drawable.derecha);
+										break;
+							case 4:
+												addedView.setImageResource(R.drawable.led);
+										break;
+							case 5:
+												addedView.setImageResource(R.drawable.rgb);
+										break;
+							case 6:
+												addedView.setImageResource(R.drawable.buzzer);
+										break;
+										
+									default:
+										break;
+							}
+							instruccionesList.add(addedView);
+							sendAdaptador.notifyDataSetChanged();
+							Toast.makeText(Interfaz.this,  "Item selected: " + position  , Toast.LENGTH_LONG).show();				
 						}
 			       	
 			       };
 			       
+	  //Listener para el list view de las instrucciones a enviar.
 				   OnItemClickListener envio = new OnItemClickListener(){
 			
 						@Override
@@ -166,6 +198,8 @@ public class Interfaz extends Activity {
      {
      	ImageView comando;
      	List<ImageView> listCommands = new ArrayList<ImageView>();
+     			
+     			instruccionesList = new ArrayList<ImageView>();//Se inicializa la lista de instrucciones también
      	
      	comando = new ImageView(context);
      	comando.setImageResource(R.drawable.frente);
@@ -197,19 +231,7 @@ public class Interfaz extends Activity {
      	
      	return listCommands;
      }
-	 public List<ImageView> getDataForInstruccionList(Context context)
-     {
-     	ImageView comando;
-     	 listCommands = new ArrayList<ImageView>();
-     	for(int i = 0; i < 30; i++)
-     	{
-     		comando = new ImageView(context);
-         	comando.setImageResource(R.drawable.ic_launcher);
-         	listCommands.add(comando);
-     	}
-     	
-     	return listCommands;
-     }	
+
 	private final class MyTouchListener implements OnTouchListener {
 		    
 			public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -251,21 +273,6 @@ public class Interfaz extends Activity {
 					    	////SECCION DEL DRAG AND DROP////
 					    	////////////////////////////////////
 		    	  			
-				    	  // Dropped, reassign View to ViewGroup
-				          View view = (View) event.getLocalState();
-				          //ViewGroup owner = (ViewGroup) view.getParent();
-				          //owner.removeView(view);
-				          //LinearLayout container = (LinearLayout) v;
-				          //container.addView(view);
-				          
-				          ImageView oldView = (ImageView) view;
-					      ImageView newView = new ImageView(getApplicationContext());
-					      newView.setImageBitmap(((BitmapDrawable) oldView.getDrawable()).getBitmap());
-				          
-					      listCommands.add(newView);
-					      sendAdaptador.notifyDataSetChanged();
-					      
-				          view.setVisibility(View.VISIBLE);
 		        break;
 		      case DragEvent.ACTION_DRAG_ENDED:
 		    	  		Log.d("ACTION_DRAG_ENDED", "Terminé de mover mi objeto.");
