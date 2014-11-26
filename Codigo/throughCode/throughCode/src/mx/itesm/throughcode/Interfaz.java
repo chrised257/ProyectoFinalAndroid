@@ -112,7 +112,7 @@ public class Interfaz extends Activity {
 			
 	   myCommandList = (ListView)findViewById(R.id.listView1);
 	   listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
-	   Button enviar = (Button)findViewById(R.id.button1);
+	   Button enviar = (Button)findViewById(R.id.aboutButton);
 	   
 	   final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(),
 					R.layout.row_comandos,getDataForListView(Interfaz.this));

@@ -24,12 +24,17 @@
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED" />
                 <action android:name="android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED" />
-            	 <category android:name="android.intent.category.LAUNCHER" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Interfaz"
             android:label="@string/title_activity_interfaz" >
+        </activity>
+        <activity
+            android:name=".AcercaActivity"
+            android:label="@string/title_activity_acerca" >
         </activity>
     </application>
 
