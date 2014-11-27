@@ -49,7 +49,7 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.res.Resources.NotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -62,21 +62,23 @@ import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class Interfaz extends Activity {
-	
 	/*ACTIVITY*/
 	 ListView myCommandList;
 	 ListView listCommandsToSend;
+	 EditText archivosText;
+	 TextView controlInsTextView;
 	 
 	/*PARA EL BLUETOOTH*/
 	private BluetoothAdapter mBluetoothAdapter;		        //Adaptador de módulo BT
@@ -87,11 +89,11 @@ public class Interfaz extends Activity {
 	private boolean okConnection;										//Bandera de conexión establecida 1: si  ; 0:no
 	private String RobotName;							   						//String del nombre del Robot
 	private Set<BluetoothDevice> pairedDevices;			   	//Auxiliar para guardar los objetos Bluetooth device de los dispositivos pareados
-	private ArrayList<String> list;						   						//Array String que guarda los nombres de los dispositivos pareados
 	boolean searchDevices = false;
 	 CommandsAdapter  sendAdaptador;									//Adaptador del ListView para los comandos a enviar
 	List<ImageView> instruccionesList;									//List donde están las instrucciones a enviar.
-	 
+	ArrayList<Integer> secuenciaInstrucciones;						//Guarda la secuencia de instrucciones a enviar 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -113,6 +115,10 @@ public class Interfaz extends Activity {
 	   myCommandList = (ListView)findViewById(R.id.listView1);
 	   listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
 	   Button enviar = (Button)findViewById(R.id.button1);
+	   archivosText = (EditText)findViewById(R.id.archivosText);
+	   ///////////////////////////////////////////////////////////////////////////////////////////////////
+	   
+	   secuenciaInstrucciones = new ArrayList<Integer>();		//Inicializando la secuencia con que se enviarán las instruccines
 	   
 	   final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(),
 					R.layout.row_comandos,getDataForListView(Interfaz.this));
@@ -122,10 +128,26 @@ public class Interfaz extends Activity {
 					
 	   //Listener para botón enviar
 	   			enviar.setOnClickListener(new OnClickListener() {
-					
+		
 					@Override
 					public void onClick(View v) {
-				
+							handleConnected();
+							int i;
+							for (i=0 ; i < secuenciaInstrucciones.size() ; i++ )
+							{
+								sendData(secuenciaInstrucciones.get(i).toString());
+								try {
+									Toast.makeText(getApplicationContext(),
+											/*secuenciaInstrucciones.get(i).toString()*/is.read() , Toast.LENGTH_SHORT).show();
+								} catch (NotFoundException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+							}
 					}
 				});
 	   			
@@ -168,6 +190,9 @@ public class Interfaz extends Activity {
 							}
 							instruccionesList.add(addedView);
 							sendAdaptador.notifyDataSetChanged();
+							
+							secuenciaInstrucciones.add(position);
+							
 							Toast.makeText(Interfaz.this,  "Item selected: " + position  , Toast.LENGTH_LONG).show();				
 						}
 			       	
@@ -184,7 +209,21 @@ public class Interfaz extends Activity {
 			       	
 			       };
 			       
-				
+		//Listener para las instrucciones a enviar
+			       OnItemLongClickListener borrar = new OnItemLongClickListener() {
+
+					@Override
+					public boolean onItemLongClick(AdapterView<?> parent,
+							View view, int position, long id) {
+						instruccionesList.remove(position);
+						secuenciaInstrucciones.remove(position);
+						sendAdaptador.notifyDataSetChanged();
+						return true;
+					}
+				}; 
+			       
+		listCommandsToSend.setOnItemLongClickListener(borrar);
+			       
        listCommandsToSend.setOnItemClickListener(envio);
        listCommandsToSend.setAdapter(sendAdaptador);
        listCommandsToSend.setOnDragListener(new MyDragListener());
@@ -272,6 +311,7 @@ public class Interfaz extends Activity {
 					        /////////////////////////////////////
 					    	////SECCION DEL DRAG AND DROP////
 					    	////////////////////////////////////
+		    	  
 		    	  			
 		        break;
 		      case DragEvent.ACTION_DRAG_ENDED:
@@ -304,7 +344,11 @@ public class Interfaz extends Activity {
 	    	   case R.id.save:
 	    		   Toast.makeText(Interfaz.this,"Guardando...", Toast.LENGTH_SHORT).show();
 	    		   return true;
-	    		   
+	    	   
+	    	   case R.id.delete:
+	    		   Toast.makeText(Interfaz.this,"Borrando...", Toast.LENGTH_SHORT).show();
+	    		   return true;
+	    		      
 	    	   default:
 	    		   return super.onOptionsItemSelected(item);
 	    	}

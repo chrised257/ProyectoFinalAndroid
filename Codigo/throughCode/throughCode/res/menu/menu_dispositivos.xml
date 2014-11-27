@@ -3,12 +3,16 @@
    
     <item android:id="@+id/open"
 	      android:icon="@drawable/led"
-	      android:title="Open File"
+	      android:title="Abrir"
 	     />   
 	
     <item android:id="@+id/save"
 	      android:icon="@drawable/led"
-	      android:title="Save File"
-	     />   
-    
+	      android:title="Guardar"
+	     />
+       
+    <item android:id="@+id/delete"
+	      android:icon="@drawable/led"
+	      android:title="Borrar"
+	     />
 </menu>
