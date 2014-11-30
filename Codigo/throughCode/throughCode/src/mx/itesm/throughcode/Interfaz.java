@@ -47,7 +47,7 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.res.Resources.NotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,12 +60,10 @@ import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -87,6 +85,7 @@ public class Interfaz extends Activity {
 	private ArrayList<String> list;	//Array String that saves the paired devices' names
 	boolean searchDevices = false;
 	List<ImageView> instruccionesList;	//List that saves each command dragged
+	ArrayList<Integer> secuenciaInstrucciones;
 	CommandsAdapter  sendAdaptador;
 	 
 	@Override
@@ -115,14 +114,30 @@ public class Interfaz extends Activity {
 	   
 	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
 			   										R.layout.row_comandos, instruccionesList);
-		
-	   //Listener para botón enviar
+
+		// Listener para botón enviar
+		enviar.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				
+			public void onClick(View v) {
+				handleConnected();
+				int i;
+				for (i = 0; i < secuenciaInstrucciones.size(); i++) {
+					sendData(secuenciaInstrucciones.get(i).toString());
+					try {
+						Toast.makeText(getApplicationContext(),
+								secuenciaInstrucciones.get(i).toString()/*
+																		 * is.read
+																		 * ()
+																		 */,
+								Toast.LENGTH_SHORT).show();
+					} catch (NotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				});
-	   			
+				}
+			}
+		});
+	
 	   	//Listener para lista de comandos disponibles
 		OnItemClickListener seleccion = new OnItemClickListener(){
 			
