@@ -29,15 +29,6 @@
             android:textAlignment="gravity" >
         </ListView>
 
-        <EditText
-            android:id="@+id/archivosText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10" >
-
-            <requestFocus />
-        </EditText>
-
     </TableLayout>
 
     <TableLayout
@@ -79,11 +70,29 @@
     </TableLayout>
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/botonEnviar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/enviar" />
+
+    <EditText
+        android:id="@+id/archivosText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/botonEnviar"
+        android:layout_alignBottom="@+id/botonEnviar"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/botonEnviar"
+        android:ems="10"
+        android:hint="Guardar / Borrar / Abrir archivo"
+        android:importantForAccessibility="yes"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
+        android:textSize="@dimen/abc_action_bar_subtitle_text_size" >
+
+        <requestFocus />
+    </EditText>
 
 </RelativeLayout>

@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -61,10 +60,9 @@ public class ConexionActivity extends Activity {
 	
 	
 	private ListView devicesList;						   						//ListView to enlist founded devices
-
 	private Button conectar; 
+	private Button about;
 	private ImageButton informacion;
-	
 	private BluetoothAdapter mBluetoothAdapter;		        //Adaptador para el módulo BT
 	private String RobotName;							   						//String que contiene el nombre del Robot
 	private Set<BluetoothDevice> pairedDevices;			   	//Lista de objetos BluetoothDevice de dispositivos pareados
@@ -79,6 +77,7 @@ public class ConexionActivity extends Activity {
 		conectar = (Button) findViewById(R.id.conectarButton);
 		devicesList = (ListView)findViewById(R.id.listView1);
 		informacion = (ImageButton)findViewById(R.id.helpButton);
+		about = (Button) findViewById(R.id.botonEnviar);
 		
 		onBluetooth(); //Turn on BT when it's turned off
 		listDevices();  //List PairedDevices in a ListView
@@ -112,6 +111,17 @@ public class ConexionActivity extends Activity {
 						
 		conectar.setOnClickListener(registro);
 		devicesList.setOnItemClickListener(robotListener);
+		
+OnClickListener regabout = new OnClickListener(){
+        	
+        	@Override
+        	public void onClick(View v){
+        		
+        		Intent intent = new Intent (ConexionActivity.this, AcercaActivity.class);
+        		startActivity(intent);
+        	}
+        };
+        about.setOnClickListener(regabout);
 	}
 	
 			/*

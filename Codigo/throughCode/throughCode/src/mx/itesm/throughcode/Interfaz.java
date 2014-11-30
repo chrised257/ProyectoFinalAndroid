@@ -59,7 +59,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.DragShadowBuilder;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
@@ -79,6 +78,7 @@ public class Interfaz extends Activity {
 	 ListView listCommandsToSend;
 	 EditText archivosText;
 	 TextView controlInsTextView;
+	 int idDraggedData;
 	 
 	/*PARA EL BLUETOOTH*/
 	private BluetoothAdapter mBluetoothAdapter;		        //Adaptador de módulo BT
@@ -93,6 +93,7 @@ public class Interfaz extends Activity {
 	 CommandsAdapter  sendAdaptador;									//Adaptador del ListView para los comandos a enviar
 	List<ImageView> instruccionesList;									//List donde están las instrucciones a enviar.
 	ArrayList<Integer> secuenciaInstrucciones;						//Guarda la secuencia de instrucciones a enviar 
+	List<ImageView> listCommands	;										//Lista de los comandos disponibles										
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,18 +115,19 @@ public class Interfaz extends Activity {
 			
 	   myCommandList = (ListView)findViewById(R.id.listView1);
 	   listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
-	   Button enviar = (Button)findViewById(R.id.button1);
+	   Button enviar = (Button)findViewById(R.id.botonEnviar);
 	   archivosText = (EditText)findViewById(R.id.archivosText);
 	   ///////////////////////////////////////////////////////////////////////////////////////////////////
 	   
 	   secuenciaInstrucciones = new ArrayList<Integer>();		//Inicializando la secuencia con que se enviarán las instruccines
+
 	   
 	   final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(),
 					R.layout.row_comandos,getDataForListView(Interfaz.this));
 	   
 	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
 			   										R.layout.row_comandos, instruccionesList);
-					
+	    
 	   //Listener para botón enviar
 	   			enviar.setOnClickListener(new OnClickListener() {
 		
@@ -138,11 +140,8 @@ public class Interfaz extends Activity {
 								sendData(secuenciaInstrucciones.get(i).toString());
 								try {
 									Toast.makeText(getApplicationContext(),
-											/*secuenciaInstrucciones.get(i).toString()*/is.read() , Toast.LENGTH_SHORT).show();
+											secuenciaInstrucciones.get(i).toString()/*is.read()*/ , Toast.LENGTH_SHORT).show();
 								} catch (NotFoundException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IOException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
@@ -157,43 +156,42 @@ public class Interfaz extends Activity {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view,
 								int position, long id) {
+							
 							//view.setOnTouchListener(new MyTouchListener());
-					    	
-							ImageView addedView = new ImageView(getApplicationContext());
 							
-							switch(position)
-							{
-							case 0:
-												addedView.setImageResource(R.drawable.frente);
-										break;
-							case 1:
-												addedView.setImageResource(R.drawable.atras);
-										break;
-							case 2:
-												addedView.setImageResource(R.drawable.izquierda);
-										break;
-							case 3:
-												addedView.setImageResource(R.drawable.derecha);
-										break;
-							case 4:
-												addedView.setImageResource(R.drawable.led);
-										break;
-							case 5:
-												addedView.setImageResource(R.drawable.rgb);
-										break;
-							case 6:
-												addedView.setImageResource(R.drawable.buzzer);
-										break;
-										
-									default:
-										break;
-							}
-							instruccionesList.add(addedView);
-							sendAdaptador.notifyDataSetChanged();
-							
-							secuenciaInstrucciones.add(position);
-							
-							Toast.makeText(Interfaz.this,  "Item selected: " + position  , Toast.LENGTH_LONG).show();				
+							 ImageView addedView = new ImageView(getApplicationContext());
+						
+								switch(position)
+								{
+								case 0:
+													addedView.setImageResource(R.drawable.frente);
+											break;
+								case 1:
+													addedView.setImageResource(R.drawable.atras);
+											break;
+								case 2:
+													addedView.setImageResource(R.drawable.izquierda);
+											break;
+								case 3:
+													addedView.setImageResource(R.drawable.derecha);
+											break;
+								case 4:
+													addedView.setImageResource(R.drawable.led);
+											break;
+								case 5:
+													addedView.setImageResource(R.drawable.rgb);
+											break;
+								case 6:
+													addedView.setImageResource(R.drawable.buzzer);
+											break;
+											
+										default:
+											       addedView.setImageResource(R.drawable.ic_launcher);
+											break;
+								}
+								instruccionesList.add(addedView);
+					    	  sendAdaptador.notifyDataSetChanged();
+					    	secuenciaInstrucciones.add(position);
 						}
 			       	
 			       };
@@ -221,7 +219,8 @@ public class Interfaz extends Activity {
 						return true;
 					}
 				}; 
-			       
+			
+				
 		listCommandsToSend.setOnItemLongClickListener(borrar);
 			       
        listCommandsToSend.setOnItemClickListener(envio);
@@ -236,7 +235,7 @@ public class Interfaz extends Activity {
 	 public List<ImageView> getDataForListView(Context context)
      {
      	ImageView comando;
-     	List<ImageView> listCommands = new ArrayList<ImageView>();
+     	listCommands = new ArrayList<ImageView>();
      			
      			instruccionesList = new ArrayList<ImageView>();//Se inicializa la lista de instrucciones también
      	
@@ -274,15 +273,15 @@ public class Interfaz extends Activity {
 	private final class MyTouchListener implements OnTouchListener {
 		    
 			public boolean onTouch(View view, MotionEvent motionEvent) {
-		     
-				    	if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+				   
+				if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 						       
 				    			ClipData data = ClipData.newPlainText("", "");
-						        DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+						        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 						        view.startDrag(data, shadowBuilder, view, 0);
-						        view.setVisibility(View.INVISIBLE);
+						        view.setVisibility(View.VISIBLE);
 						        
-				        return true;
+						         return true;
 				      } 
 				      
 				      else {
@@ -312,10 +311,47 @@ public class Interfaz extends Activity {
 					    	////SECCION DEL DRAG AND DROP////
 					    	////////////////////////////////////
 		    	  
-		    	  			
+		    	  ImageView addedView = new ImageView(getApplicationContext());
+		    	String identificador = "atras";
+		    	  
+					switch(identificador)
+					{
+					case "frente":
+										addedView.setImageResource(R.drawable.frente);
+								break;
+					case "atras":
+										addedView.setImageResource(R.drawable.atras);
+								break;
+					case "izquierda":
+										addedView.setImageResource(R.drawable.izquierda);
+								break;
+					case "derecha":
+										addedView.setImageResource(R.drawable.derecha);
+								break;
+					case "led":
+										addedView.setImageResource(R.drawable.led);
+								break;
+					case "rgb":
+										addedView.setImageResource(R.drawable.rgb);
+								break;
+					case "buzzer":
+										addedView.setImageResource(R.drawable.buzzer);
+								break;
+								
+							default:
+								       addedView.setImageResource(R.drawable.ic_launcher);
+								break;
+					}
+					instruccionesList.add(addedView);
+		    	  sendAdaptador.notifyDataSetChanged();
+					
+					//secuenciaInstrucciones.add(identificador);
+					Toast.makeText(Interfaz.this,  identificador  , Toast.LENGTH_SHORT).show();	
+
 		        break;
 		      case DragEvent.ACTION_DRAG_ENDED:
 		    	  		Log.d("ACTION_DRAG_ENDED", "Terminé de mover mi objeto.");
+		    	  		
 		      default:
 		        break;
 		      }
