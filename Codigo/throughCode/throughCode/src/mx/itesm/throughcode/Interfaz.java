@@ -88,8 +88,8 @@ public class Interfaz extends Activity {
 	private String RobotName;							   						//String del nombre del Robot
 	private Set<BluetoothDevice> pairedDevices;			   	//Auxiliar para guardar los objetos Bluetooth device de los dispositivos pareados
 	boolean searchDevices = false;
-	 CommandsAdapter  sendAdaptador;									//Adaptador del ListView para los comandos a enviar
-	List<ImageView> instruccionesList;									//List donde están las instrucciones a enviar.
+	InstruccionAdapter  sendAdaptador;									//Adaptador del ListView para los comandos a enviar
+	List<Comando> instruccionesList;									//List donde están las instrucciones a enviar.
 	ArrayList<Integer> secuenciaInstrucciones;						//Guarda la secuencia de instrucciones a enviar 
 	List<ImageView> listCommands	;										//Lista de los comandos disponibles										
 	
@@ -123,8 +123,8 @@ public class Interfaz extends Activity {
 	   
 		final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(), R.layout.row_comandos,getDataForListView(Interfaz.this));
 	   
-	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
-			   										R.layout.row_comandos, instruccionesList);
+	    sendAdaptador = new InstruccionAdapter(getApplicationContext(),
+			   										R.layout.row_commands_tosend,instruccionesList );
 	    
 	   //Listener para botón enviar
 	   			enviar.setOnClickListener(new OnClickListener() {
@@ -156,38 +156,61 @@ public class Interfaz extends Activity {
 								int position, long id) {
 					
 							//view.setOnTouchListener(new MyTouchListener());
-							
+							 Comando comando = new Comando();
 							 ImageView addedView = new ImageView(getApplicationContext());
 						
 								switch(position)
 								{
 								case 0:
 													addedView.setImageResource(R.drawable.frente);
+													comando.setSecuencia("0");
+													comando.setTipoInstruccion("Movimiento");
+													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 1:
 													addedView.setImageResource(R.drawable.atras);
+													comando.setTipoInstruccion("Movimiento");
+													comando.setSecuencia("0");
+													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 2:
 													addedView.setImageResource(R.drawable.izquierda);
+													comando.setTipoInstruccion("Movimiento");
+													comando.setSecuencia("0");
+													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 3:
 													addedView.setImageResource(R.drawable.derecha);
+													comando.setTipoInstruccion("Movimiento");
+													comando.setSecuencia("0");
+													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 4:
 													addedView.setImageResource(R.drawable.led);
+													comando.setTipoInstruccion("On/Off LEDs");
+													comando.setSecuencia("0,0,0,0");
+													comando.setIndicacionSecuencia("LEDs");
 											break;
 								case 5:
 													addedView.setImageResource(R.drawable.rgb);
+													comando.setTipoInstruccion("Configuración led RGB");
+													comando.setSecuencia("0,0,0");
+													comando.setIndicacionSecuencia("R, G, B");
 											break;
 								case 6:
 													addedView.setImageResource(R.drawable.buzzer);
+													comando.setTipoInstruccion("Configuración Buzzer");
+													comando.setSecuencia("0,0");
+													comando.setIndicacionSecuencia("tiempo, frecuencia");
 											break;
 											
 										default:
 											       addedView.setImageResource(R.drawable.ic_launcher);
 											break;
 								}
-								instruccionesList.add(addedView);
+								
+								comando.setImage(addedView);
+								instruccionesList.add(comando);
 					    	  sendAdaptador.notifyDataSetChanged();
 					    	secuenciaInstrucciones.add(position);
 						}
@@ -233,7 +256,7 @@ public class Interfaz extends Activity {
      	ImageView comando;
      	listCommands = new ArrayList<ImageView>();
      			
-     			instruccionesList = new ArrayList<ImageView>();//Se inicializa la lista de instrucciones también
+     			instruccionesList = new ArrayList<Comando>();//Se inicializa la lista de instrucciones también
      	
      	comando = new ImageView(context);
      	comando.setImageResource(R.drawable.frente);
@@ -310,6 +333,7 @@ public class Interfaz extends Activity {
 					    	////////////////////////////////////
 		    	  
 		    	  ImageView addedView = new ImageView(getApplicationContext());
+		    	  Comando comando = new Comando();
 		    	String identificador = "atras";
 		    	  
 					switch(identificador)
@@ -340,7 +364,8 @@ public class Interfaz extends Activity {
 								       addedView.setImageResource(R.drawable.ic_launcher);
 								break;
 					}
-					instruccionesList.add(addedView);
+					comando.setImage(addedView);
+					instruccionesList.add(comando);
 		    	  sendAdaptador.notifyDataSetChanged();
 					
 					//secuenciaInstrucciones.add(identificador);
