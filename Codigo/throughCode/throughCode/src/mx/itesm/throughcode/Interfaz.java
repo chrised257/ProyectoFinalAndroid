@@ -30,8 +30,6 @@
 
 package mx.itesm.throughcode;
 
-
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -71,7 +69,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class Interfaz extends Activity {
 	/*ACTIVITY*/
 	 ListView myCommandList;
@@ -81,11 +78,12 @@ public class Interfaz extends Activity {
 	 int idDraggedData;
 	 
 	/*PARA EL BLUETOOTH*/
-	private BluetoothAdapter mBluetoothAdapter;		        //Adaptador de módulo BT
-	private BluetoothSocket socket;										//Socket de conexión
-	private InputStream is;								    						//InputStream
-	private OutputStream os;													//Output Stream for BT Connection
+	private BluetoothAdapter mBluetoothAdapter;	//Adapter for BT module
+	private BluetoothSocket socket;	//Connection's socket
+	private InputStream is;	//InputStream
+	private OutputStream os;	//Output Stream for BT Connection
 	private BroadcastReceiver btMonitor = null;					//Monitor que escucha todos los eventos Bluetooth
+<<<<<<< HEAD
 	private boolean okConnection;										//Bandera de conexión establecida 1: si  ; 0:no
 	private String RobotName;							   						//String del nombre del Robot
 	private Set<BluetoothDevice> pairedDevices;			   	//Auxiliar para guardar los objetos Bluetooth device de los dispositivos pareados
@@ -95,6 +93,17 @@ public class Interfaz extends Activity {
 	ArrayList<Integer> secuenciaInstrucciones;						//Guarda la secuencia de instrucciones a enviar 
 	List<ImageView> listCommands	;										//Lista de los comandos disponibles										
 	
+=======
+	private boolean okConnection;	//Flag's connection
+	private String RobotName;	//Robot's name String
+	private Set<BluetoothDevice> pairedDevices;	//Aux. to save paired devices located at the phone 
+	private ArrayList<String> list;	//Array String that saves the paired devices' names
+	boolean searchDevices = false;
+	List<ImageView> instruccionesList;	//List that saves each command dragged
+	ArrayList<Integer> secuenciaInstrucciones;
+	CommandsAdapter  sendAdaptador;
+	 
+>>>>>>> 91ec15e8706ecf27f0088c496dad33c5342d2d1f
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -122,11 +131,11 @@ public class Interfaz extends Activity {
 	   secuenciaInstrucciones = new ArrayList<Integer>();		//Inicializando la secuencia con que se enviarán las instruccines
 
 	   
-	   final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(),
-					R.layout.row_comandos,getDataForListView(Interfaz.this));
+		final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(), R.layout.row_comandos,getDataForListView(Interfaz.this));
 	   
 	    sendAdaptador = new CommandsAdapter(getApplicationContext(),
 			   										R.layout.row_comandos, instruccionesList);
+<<<<<<< HEAD
 	    
 	   //Listener para botón enviar
 	   			enviar.setOnClickListener(new OnClickListener() {
@@ -147,18 +156,47 @@ public class Interfaz extends Activity {
 								}
 								
 							}
+=======
+
+		// Listener para botón enviar
+		enviar.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				handleConnected();
+				int i;
+				for (i = 0; i < secuenciaInstrucciones.size(); i++) {
+					sendData(secuenciaInstrucciones.get(i).toString());
+					try {
+						Toast.makeText(getApplicationContext(),
+								secuenciaInstrucciones.get(i).toString()/*
+																		 * is.read
+																		 * ()
+																		 */,
+								Toast.LENGTH_SHORT).show();
+					} catch (NotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+>>>>>>> 91ec15e8706ecf27f0088c496dad33c5342d2d1f
 					}
-				});
-	   			
+				}
+			}
+		});
+	
 	   	//Listener para lista de comandos disponibles
-				   OnItemClickListener seleccion = new OnItemClickListener(){
+		OnItemClickListener seleccion = new OnItemClickListener(){
 			
+<<<<<<< HEAD
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view,
 								int position, long id) {
 							
+=======
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+>>>>>>> 91ec15e8706ecf27f0088c496dad33c5342d2d1f
 							//view.setOnTouchListener(new MyTouchListener());
 							
+<<<<<<< HEAD
 							 ImageView addedView = new ImageView(getApplicationContext());
 						
 								switch(position)
@@ -193,19 +231,50 @@ public class Interfaz extends Activity {
 					    	  sendAdaptador.notifyDataSetChanged();
 					    	secuenciaInstrucciones.add(position);
 						}
+=======
+							switch(position)
+							{
+							case 0:
+												addedView.setImageResource(R.drawable.frente);
+										break;
+							case 1:
+												addedView.setImageResource(R.drawable.atras);
+										break;
+							case 2:
+												addedView.setImageResource(R.drawable.izquierda);
+										break;
+							case 3:
+												addedView.setImageResource(R.drawable.derecha);
+										break;
+							case 4:
+												addedView.setImageResource(R.drawable.led);
+										break;
+							case 5:
+												addedView.setImageResource(R.drawable.rgb);
+										break;
+							case 6:
+												addedView.setImageResource(R.drawable.buzzer);
+										break;
+										
+									default:
+										break;
+							}
+							instruccionesList.add(addedView);
+							sendAdaptador.notifyDataSetChanged();
+							Toast.makeText(Interfaz.this,  "Item selected: " + position  , Toast.LENGTH_LONG).show();				
+			}
+>>>>>>> 91ec15e8706ecf27f0088c496dad33c5342d2d1f
 			       	
-			       };
+		};
 			       
 	  //Listener para el list view de las instrucciones a enviar.
-				   OnItemClickListener envio = new OnItemClickListener(){
+		OnItemClickListener envio = new OnItemClickListener(){
 			
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id) {
-					    	Toast.makeText(Interfaz.this, "Comando por enviar",  Toast.LENGTH_SHORT).show();				
-						}
-			       	
-			       };
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Toast.makeText(Interfaz.this, "Comando por enviar",  Toast.LENGTH_SHORT).show();				
+			}       	
+		};
 			       
 		//Listener para las instrucciones a enviar
 			       OnItemLongClickListener borrar = new OnItemLongClickListener() {
@@ -221,18 +290,23 @@ public class Interfaz extends Activity {
 				}; 
 			
 				
+<<<<<<< HEAD
 		listCommandsToSend.setOnItemLongClickListener(borrar);
 			       
        listCommandsToSend.setOnItemClickListener(envio);
        listCommandsToSend.setAdapter(sendAdaptador);
+=======
+		listCommandsToSend.setOnItemClickListener(envio);
+		listCommandsToSend.setAdapter(sendAdaptador);
+>>>>>>> 91ec15e8706ecf27f0088c496dad33c5342d2d1f
        listCommandsToSend.setOnDragListener(new MyDragListener());
-       
-       myCommandList.setOnItemClickListener(seleccion);
-       myCommandList.setAdapter(miAdaptador);
+		
+		myCommandList.setOnItemClickListener(seleccion);
+		myCommandList.setAdapter(miAdaptador);
 	    
 	}
 	
-	 public List<ImageView> getDataForListView(Context context)
+	public List<ImageView> getDataForListView(Context context)
      {
      	ImageView comando;
      	listCommands = new ArrayList<ImageView>();
@@ -271,6 +345,7 @@ public class Interfaz extends Activity {
      }
 
 	private final class MyTouchListener implements OnTouchListener {
+<<<<<<< HEAD
 		    
 			public boolean onTouch(View view, MotionEvent motionEvent) {
 				   
@@ -289,27 +364,48 @@ public class Interfaz extends Activity {
 				      }
 		    	}
 		 }
+=======
+		
+		public boolean onTouch(View view, MotionEvent motionEvent) {
+			
+			if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+				ClipData data = ClipData.newPlainText("", "");
+				DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+				view.startDrag(data, shadowBuilder, view, 0);
+				view.setVisibility(View.VISIBLE);
+				
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+>>>>>>> 91ec15e8706ecf27f0088c496dad33c5342d2d1f
 	  
 	  class MyDragListener implements View.OnDragListener {
 
 			private int action;
 
 		    public boolean onDrag(View v, DragEvent event) {
-		      action = event.getAction();
-		      switch (action) {
-		      case DragEvent.ACTION_DRAG_STARTED:
+		    	action = event.getAction();
+		    	
+		    	switch (action) {
+		    	
+		    	case DragEvent.ACTION_DRAG_STARTED:
 		    	  		Log.d("ACTION_DRAG_STARTED", "Empecé mi acción de drag");
-		        break;
+		    		break;
 		      case DragEvent.ACTION_DRAG_ENTERED:
 		    	  		Log.d("ACTION_DRAG_ENTERED", "Entré a mi acción de drag.");
-		        break;
-		      case DragEvent.ACTION_DRAG_EXITED:
+		        	break;
+				case DragEvent.ACTION_DRAG_EXITED:
 		    	  		Log.d("ACTION_DRAG_EXITED", "Salí de mi acción de drag.");
 		        break;
-		      case DragEvent.ACTION_DROP:
+		    	case DragEvent.ACTION_DROP:
 					        /////////////////////////////////////
 					    	////SECCION DEL DRAG AND DROP////
 					    	////////////////////////////////////
+<<<<<<< HEAD
 		    	  
 		    	  ImageView addedView = new ImageView(getApplicationContext());
 		    	String identificador = "atras";
@@ -354,6 +450,13 @@ public class Interfaz extends Activity {
 		    	  		
 		      default:
 		        break;
+=======
+			        break;
+		      case DragEvent.ACTION_DRAG_ENDED:
+		    	  		Log.d("ACTION_DRAG_ENDED", "Terminé de mover mi objeto.");
+			    default:
+			    	break;
+>>>>>>> 91ec15e8706ecf27f0088c496dad33c5342d2d1f
 		      }
 		      return true;
 		    }
