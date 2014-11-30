@@ -188,8 +188,8 @@ public class Interfaz extends Activity {
 								case 4:
 													addedView.setImageResource(R.drawable.led);
 													comando.setTipoInstruccion("On/Off LEDs");
-													comando.setSecuencia("0,0,0,0");
-													comando.setIndicacionSecuencia("LEDs");
+													comando.setSecuencia("off, off, off, off");
+													comando.setIndicacionSecuencia("on/off, on/off, on/off, on/off");
 											break;
 								case 5:
 													addedView.setImageResource(R.drawable.rgb);
