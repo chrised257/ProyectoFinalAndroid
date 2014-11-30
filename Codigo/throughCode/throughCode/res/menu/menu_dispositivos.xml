@@ -11,9 +11,4 @@
 	      android:title="Save File"
 	     />   
     
-    <item android:id="@+id/searchDevices"
-	      android:icon="@drawable/led"
-	      android:title="Search Devices"
-	     />  
-    
 </menu>

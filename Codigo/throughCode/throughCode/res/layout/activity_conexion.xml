@@ -51,10 +51,18 @@
         android:id="@+id/helpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/frameLayout1"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="18dp"
-        android:layout_toLeftOf="@+id/logoImageView"
+        android:layout_marginBottom="14dp"
         android:contentDescription="@string/helpDescription"
         android:src="@drawable/ic_launcher" />
+
+    <Button
+        android:id="@+id/aboutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/helpButton"
+        android:layout_alignRight="@+id/frameLayout1"
+        android:text="@string/about" />
 
 </RelativeLayout>
