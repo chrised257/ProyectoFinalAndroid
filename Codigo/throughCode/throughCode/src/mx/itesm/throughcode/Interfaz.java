@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -47,6 +48,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,6 +63,7 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -94,6 +97,8 @@ public class Interfaz extends Activity {
 	
 	//Constante para identificar intents de retorno.
 	private final int ID_REQUEST = 222;
+	//Posición en instruccionesList donde se almacenaran los datos de regreso del dialog.
+	private int mIntentPosition = -1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -161,73 +166,72 @@ public class Interfaz extends Activity {
 			}
 		});
 
-	   	//Listener para lista de comandos disponibles
-		OnItemClickListener seleccion = new OnItemClickListener(){
-			
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id) {
-					
-							//view.setOnTouchListener(new MyTouchListener());
-							 Comando comando = new Comando();
-							 ImageView addedView = new ImageView(getApplicationContext());
-						
-								switch(position)
-								{
-								case 0:
-													addedView.setImageResource(R.drawable.frente);
-													comando.setSecuencia("0");
-													comando.setTipoInstruccion("move_fwd");
-													comando.setIndicacionSecuencia("tiempo");
-											break;
-								case 1:
-													addedView.setImageResource(R.drawable.atras);
-													comando.setTipoInstruccion("move_back");
-													comando.setSecuencia("0");
-													comando.setIndicacionSecuencia("tiempo");
-											break;
-								case 2:
-													addedView.setImageResource(R.drawable.izquierda);
-													comando.setTipoInstruccion("move_left");
-													comando.setSecuencia("0");
-													comando.setIndicacionSecuencia("tiempo");
-											break;
-								case 3:
-													addedView.setImageResource(R.drawable.derecha);
-													comando.setTipoInstruccion("move_right");
-													comando.setSecuencia("0");
-													comando.setIndicacionSecuencia("tiempo");
-											break;
-								case 4:
-													addedView.setImageResource(R.drawable.led);
-													comando.setTipoInstruccion("led");
-													comando.setSecuencia("off, off, off, off");
-													comando.setIndicacionSecuencia("on/off, on/off, on/off, on/off");
-											break;
-								case 5:
-													addedView.setImageResource(R.drawable.rgb);
-													comando.setTipoInstruccion("ledRGB");
-													comando.setSecuencia("0,0,0");
-													comando.setIndicacionSecuencia("R, G, B");
-											break;
-								case 6:
-													addedView.setImageResource(R.drawable.buzzer);
-													comando.setTipoInstruccion("buzz");
-													comando.setSecuencia("0,0");
-													comando.setIndicacionSecuencia("tiempo, frecuencia");
-											break;
-											
-										default:
-											       addedView.setImageResource(R.drawable.ic_launcher);
-											break;
-								}
-								
-								comando.setImage(addedView);
-								instruccionesList.add(comando);
-					    	  sendAdaptador.notifyDataSetChanged();
-					    	secuenciaInstrucciones.add(position);
-						}
-			       	
+		// Listener para lista de comandos disponibles
+		OnItemClickListener seleccion = new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				// view.setOnTouchListener(new MyTouchListener());
+				Comando comando = new Comando();
+				ImageView addedView = new ImageView(getApplicationContext());
+
+				switch (position) {
+				case 0:
+					addedView.setImageResource(R.drawable.frente);
+					comando.setSecuencia("0");
+					comando.setTipoInstruccion("move_fwd");
+					comando.setIndicacionSecuencia("tiempo");
+					break;
+				case 1:
+					addedView.setImageResource(R.drawable.atras);
+					comando.setTipoInstruccion("move_back");
+					comando.setSecuencia("0");
+					comando.setIndicacionSecuencia("tiempo");
+					break;
+				case 2:
+					addedView.setImageResource(R.drawable.izquierda);
+					comando.setTipoInstruccion("move_left");
+					comando.setSecuencia("0");
+					comando.setIndicacionSecuencia("tiempo");
+					break;
+				case 3:
+					addedView.setImageResource(R.drawable.derecha);
+					comando.setTipoInstruccion("move_right");
+					comando.setSecuencia("0");
+					comando.setIndicacionSecuencia("tiempo");
+					break;
+				case 4:
+					addedView.setImageResource(R.drawable.led);
+					comando.setTipoInstruccion("led");
+					comando.setSecuencia("off, off, off, off");
+					comando.setIndicacionSecuencia("on/off, on/off, on/off, on/off");
+					break;
+				case 5:
+					addedView.setImageResource(R.drawable.rgb);
+					comando.setTipoInstruccion("ledRGB");
+					comando.setSecuencia("0,0,0");
+					comando.setIndicacionSecuencia("R, G, B");
+					break;
+				case 6:
+					addedView.setImageResource(R.drawable.buzzer);
+					comando.setTipoInstruccion("buzz");
+					comando.setSecuencia("0,0");
+					comando.setIndicacionSecuencia("tiempo, frecuencia");
+					break;
+
+				default:
+					addedView.setImageResource(R.drawable.ic_launcher);
+					break;
+				}
+
+				comando.setImage(addedView);
+				instruccionesList.add(comando);
+				sendAdaptador.notifyDataSetChanged();
+				secuenciaInstrucciones.add(position);
+			}
+
 		};
 			       
 	  //Listener para el list view de las instrucciones a enviar.
@@ -241,6 +245,7 @@ public class Interfaz extends Activity {
 				Intent intent = new Intent(Interfaz.this, GenericDialog.class);
 				String value = instruccionesList.get(position).getTipo();
 				intent.putExtra("instruction_type", value);
+				mIntentPosition = position;
 				startActivityForResult(intent, ID_REQUEST);
 			}       	
 		};
@@ -268,6 +273,62 @@ public class Interfaz extends Activity {
 		myCommandList.setOnItemClickListener(seleccion);
 		myCommandList.setAdapter(miAdaptador);
 	    
+	}
+	
+	//Recuperar los datos del intent resultante y almacenarlos en la posicion correspondiente.
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(requestCode == ID_REQUEST){
+			if(resultCode == RESULT_OK){
+				Bundle bundle = data.getExtras();
+				Comando cmd = instruccionesList.get(mIntentPosition);
+				int duracion = 0, frecuencia = 20;
+				
+				switch(bundle.getString("instruction_type")){
+				case "move_fwd":
+				case "move_back":
+				case "move_left":
+				case "move_right":
+					duracion = bundle.getInt("duration");
+					cmd.setTiempo(duracion);
+					cmd.setSecuencia(Integer.toString(duracion));
+					break;
+				case "buzz":
+					duracion = bundle.getInt("duration");
+					frecuencia = bundle.getInt("frequency");
+					cmd.setTiempo(duracion);
+					cmd.setFrecuencia(frecuencia);
+					cmd.setSecuencia(Integer.toString(duracion) + "," + Integer.toString(frecuencia));
+					break;
+				case "led":
+					boolean [] ledsActivos = bundle.getBooleanArray("activeLeds");
+					int led1 = ledsActivos[0] ? 1 : 0;
+					int led2 = ledsActivos[1] ? 2 : 0;
+					int led3 = ledsActivos[2] ? 4 : 0;
+					int led4 = ledsActivos[3] ? 8 : 0;
+					int ledBitmask = led1 | led2 | led3 | led4;
+					cmd.setLED(ledBitmask);
+					String ledSecuencia = "";
+					ledSecuencia = ledSecuencia.concat(ledsActivos[0] ? "on," : "off,");
+					ledSecuencia = ledSecuencia.concat(ledsActivos[1] ? "on," : "off,");
+					ledSecuencia = ledSecuencia.concat(ledsActivos[2] ? "on," : "off,");
+					ledSecuencia = ledSecuencia.concat(ledsActivos[3] ? "on" : "off");
+					cmd.setSecuencia(ledSecuencia);
+					break;
+				case "ledRGB":
+					int color = bundle.getInt("color");
+					int rojo = Color.red(color);
+					int verde = Color.green(color);
+					int azul = Color.blue(color);
+					cmd = instruccionesList.get(mIntentPosition);
+					cmd.setRGB(rojo, verde, azul);
+					cmd.setSecuencia(Integer.toString(rojo) + "," + Integer.toString(verde) + "," + Integer.toString(azul));
+					break;
+				}
+				
+				//Actualizar lista
+				((BaseAdapter)listCommandsToSend.getAdapter()).notifyDataSetChanged();
+			}
+		}
 	}
 	
 	public List<ImageView> getDataForListView(Context context)

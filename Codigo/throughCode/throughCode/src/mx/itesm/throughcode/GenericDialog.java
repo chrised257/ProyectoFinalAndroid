@@ -85,6 +85,7 @@ public class GenericDialog extends Activity {
 		redSB.setMax(255);
 		greenSB.setMax(255);
 		blueSB.setMax(255);
+		colorView.setBackgroundColor(Color.argb(255, redSB.getProgress(), greenSB.getProgress(), blueSB.getProgress()));
 		
 		//Filter view by instruction type
 		switch(instructionType){
@@ -172,20 +173,42 @@ public class GenericDialog extends Activity {
 		public void onClick(View v) {
 			Intent intent = new Intent();
 			intent.putExtra("instruction_type", instructionType);
+			float durationValue = 0.0f;
+			int milliseconds = 0;
 			
 			switch(instructionType){
 			case "move_fwd":
 			case "move_back":
 			case "move_left":
 			case "move_right":
-				intent.putExtra("duration", Float.parseFloat(durationEdit.getText().toString()));
+				try{
+					durationValue = Float.parseFloat(durationEdit.getText().toString());
+				}
+				catch (NullPointerException nptre){
+					durationValue = 0.0f;
+				}
+				catch (NumberFormatException nfe){
+					durationValue = 0.0f;
+				}
+				milliseconds = (int)(durationValue * 1000);
+				intent.putExtra("duration", milliseconds);
 				break;
 			case "buzz":
-				intent.putExtra("duration", Float.parseFloat(durationEdit.getText().toString()));
+				try{
+					durationValue = Float.parseFloat(durationEdit.getText().toString());
+				}
+				catch (NullPointerException nptre){
+					durationValue = 0.0f;
+				}
+				catch (NumberFormatException nfe){
+					durationValue = 0.0f;
+				}
+				milliseconds = (int)(durationValue * 1000);
+				intent.putExtra("duration", milliseconds);
 				intent.putExtra("frequency", frequencySB.getProgress() + 20);
 				break;
 			case "led":
-				intent.putExtra("active", mActiveLeds);
+				intent.putExtra("activeLeds", mActiveLeds);
 				break;
 			case "ledRGB":
 				intent.putExtra("color", Color.argb(255, redSB.getProgress(), greenSB.getProgress(), blueSB.getProgress()));
