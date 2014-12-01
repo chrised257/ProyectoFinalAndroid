@@ -9,37 +9,22 @@
     <string name="title_activity_interfaz">Interfaz</string>
     <string name="hello_world">Hello world!</string>
     <string name="enviar">Enviar</string>
+    <string name="tutorial">\nTutorial</string>
     <string name="comandos">Comandos</string>
     <string name="instrucciones">Instrucciones</string>
     <string name="about">About</string>
-    <string name="title_activity_acerca">Acerca</string>
-    <string name="abouttext">
-throughCode - Instruction transmitter for use with compatible robot using mobile devices\n
-\n
-Copyright © 2014 - ITESM\n
-\n
-This program is free software: you can redistribute it and/or modify\n
-it under the terms of the GNU General Public License as published by\n
-the Free Software Foundation, either version 3 of the License, or\n
-(at your option) any later version.\n
-\n
-This program is distributed in the hope that it will be useful,\n
-but WITHOUT ANY WARRANTY; without even the implied warranty of\n
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n
-GNU General Public License for more details.\n
-\n
-You should have received a copy of the GNU General Public License\n
-along with this program. If not, see http://www.gnu.org/licenses/.\n
-\n
-Authors:\n
-\n
-ITESM representatives\n
-Ing. Martha Sordia Salinas msordia@itesm.mx\n
-Ing. Mario Isidro de la Fuente Martínez mario.delafuente@itesm.mx\n
-\n
-ITESM students\n
-Christian Eduardo Rodriguez Palacios christian.2500@hotmail.com\n
-Jesus Ramirez Nava jesus.isdr@gmail.com\n
-Eugenio Sanchez Garza sanchezgarzae@gmail.com\n</string>
-
+    <string name="title_activity_acerca">Acerca de</string>
+    <string name="bloglink">Blog</string>
+    <string name="blankspace"></string>
+    <string name="abouttext"><b>throughCode - Instruction transmitter for use with compatible robot using mobile devices.</b>\n
+								\n<b>Copyright © 2014 - ITESM</b>\n
+								\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n
+								\nThis program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n
+								\nYou should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.\n
+								\n<b>Authors</b>\n
+								\nITESM representatives\n\nIng. Martha Sordia Salinas\n<i>[msordia@itesm.mx]</i>\nIng. Mario Isidro de la Fuente Martínez\n<i>[mario.delafuente@itesm.mx]</i>\n
+								\nITESM students\n\nChristian Eduardo Rodriguez Palacios\n<i>[christian.2500@hotmail.com]</i>\nJesus Ramirez Nava\n<i>[jesus.isdr@gmail.com]</i>\nEugenio Sanchez Garza\n<i>[sanchezgarzae@gmail.com]</i>\n</string>
+    <string name="title_activity_help"></string>
+    <string name="title_activity_land_video">LandVideoAct</string>
+    <string name="descripcion">En el siguiente video, se muestra un tutorial acerca del funcionamiento de la aplicación, junto con un breve ejemplo práctico.\n</string>
 </resources>

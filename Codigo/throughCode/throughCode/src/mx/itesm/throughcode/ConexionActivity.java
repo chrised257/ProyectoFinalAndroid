@@ -62,7 +62,7 @@ public class ConexionActivity extends Activity {
 	private ListView devicesList;						   						//ListView to enlist founded devices
 	private Button conectar; 
 	private Button about;
-	private ImageButton informacion;
+	private ImageButton help;
 	private BluetoothAdapter mBluetoothAdapter;		        //Adaptador para el módulo BT
 	private String RobotName;							   						//String que contiene el nombre del Robot
 	private Set<BluetoothDevice> pairedDevices;			   	//Lista de objetos BluetoothDevice de dispositivos pareados
@@ -76,8 +76,8 @@ public class ConexionActivity extends Activity {
 		
 		conectar = (Button) findViewById(R.id.conectarButton);
 		devicesList = (ListView)findViewById(R.id.listView1);
-		informacion = (ImageButton)findViewById(R.id.helpButton);
 		about = (Button) findViewById(R.id.botonEnviar);
+		help = (ImageButton) findViewById(R.id.helpButton);
 		
 		onBluetooth(); //Turn on BT when it's turned off
 		listDevices();  //List PairedDevices in a ListView
@@ -112,7 +112,7 @@ public class ConexionActivity extends Activity {
 		conectar.setOnClickListener(registro);
 		devicesList.setOnItemClickListener(robotListener);
 		
-OnClickListener regabout = new OnClickListener(){
+		OnClickListener regabout = new OnClickListener(){
         	
         	@Override
         	public void onClick(View v){
@@ -122,7 +122,20 @@ OnClickListener regabout = new OnClickListener(){
         	}
         };
         about.setOnClickListener(regabout);
-	}
+	
+        OnClickListener reghelp = new OnClickListener(){
+    	
+        	@Override
+        	public void onClick(View v){
+    		
+        		Intent intent = new Intent (ConexionActivity.this, HelpActivity.class);
+        		startActivity(intent);
+        	}
+        };
+    	help.setOnClickListener(reghelp);
+    	}
+	
+	
 	
 			/*
 			 * If there is no BT, it makes a toast. If there is BT enables an intent to turn it on
