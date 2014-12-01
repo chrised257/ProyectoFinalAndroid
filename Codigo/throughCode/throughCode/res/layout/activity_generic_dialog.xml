@@ -1,0 +1,144 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/DialogLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="mx.itesm.throughcode.GenericDialog" >
+
+    <EditText
+        android:id="@+id/durationEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/durationHint"
+        android:inputType="numberDecimal" >
+
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+    	android:id="@+id/FrequencyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/frequencyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/frequencyLabel" />
+
+        <SeekBar
+            android:id="@+id/frequencySeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+    	android:id="@+id/LedLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/led1CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/led1Label"
+            android:onClick="onCheckboxClicked" />
+
+        <CheckBox
+            android:id="@+id/led2CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/led2Label"
+            android:onClick="onCheckboxClicked" />
+
+        <CheckBox
+            android:id="@+id/led3CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/led3Label"
+            android:onClick="onCheckboxClicked" />
+
+        <CheckBox
+            android:id="@+id/led4CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/led4Label"
+            android:onClick="onCheckboxClicked" />
+
+    </LinearLayout>
+
+    <LinearLayout
+    	android:id="@+id/RGBLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/colorText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/redText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/redLabel" />
+
+        <SeekBar
+            android:id="@+id/redSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/greenText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/greenLabel" />
+
+        <SeekBar
+            android:id="@+id/greenSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        
+        <TextView
+            android:id="@+id/blueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/blueLabel" />
+
+        <SeekBar
+            android:id="@+id/blueSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancelButton" />
+
+        <Button
+            android:id="@+id/acceptButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/acceptButton" />
+
+    </LinearLayout>
+
+</LinearLayout>
