@@ -1,5 +1,7 @@
 package mx.itesm.throughcode;
 
+import android.widget.ImageView;
+
 public class Comando {
 		
 		private int id;
@@ -10,6 +12,10 @@ public class Comando {
 		private int verde;
 		private int azul;
 		private int led;
+		private ImageView image;
+		private String tipoInstruccion;
+		private String indicacionSecuencia;
+		private String secuencia;
 		
 		public Comando(){
 			this.name = "";
@@ -44,6 +50,18 @@ public class Comando {
 		public void setID(int id){
 			this.id = id;
 		}
+		public void setImage(ImageView image){
+			this.image = image;
+		}
+		public void setTipoInstruccion(String tipo){
+			this.tipoInstruccion = tipo;
+		}
+		public void setIndicacionSecuencia(String indicacion){
+			this.indicacionSecuencia = indicacion;
+		}
+		public void setSecuencia(String secuencia){
+			this.secuencia = secuencia;
+		}
 		void setName(String name)
 		{
 			this.name = name;
@@ -68,6 +86,19 @@ public class Comando {
 		}
 		
 		//Seccion de getters
+		
+		public String getTipo(){
+			return this.tipoInstruccion;
+		}
+		public String getIndicacionSecuencia(){
+			return this.indicacionSecuencia;
+		}
+		public String getSecuencia(){
+			return this.secuencia;
+		}
+		public ImageView getImage(){
+			return this.image;
+		}
 		public int getID(){
 			return this.id ;
 		}

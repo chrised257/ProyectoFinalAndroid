@@ -43,6 +43,7 @@
             android:label="@string/title_activity_acerca" >
         </activity>
         <activity
+
             android:name=".HelpActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_help" >
@@ -51,6 +52,11 @@
             android:name=".LandVideoAct"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_land_video" >
+
+            android:name=".GenericDialog"
+            android:label="@string/title_activity_generic_dialog"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.Base.AppCompat.Dialog.Light.FixedSize" >
         </activity>
     </application>
 

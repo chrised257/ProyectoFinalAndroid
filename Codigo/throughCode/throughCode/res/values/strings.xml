@@ -27,4 +27,17 @@
     <string name="title_activity_help"></string>
     <string name="title_activity_land_video">LandVideoAct</string>
     <string name="descripcion">En el siguiente video, se muestra un tutorial acerca del funcionamiento de la aplicación, junto con un breve ejemplo práctico.\n</string>
+    <string name="title_activity_generic_dialog">Dialog</string>
+    <string name="action_settings">Settings</string>
+    <string name="durationHint">Duración (segundos)</string>
+    <string name="frequencyLabel">Frecuencia (Hz)</string>
+    <string name="led1Label">LED 1</string>
+    <string name="led2Label">LED 2</string>
+    <string name="led3Label">LED 3</string>
+    <string name="led4Label">LED 4</string>
+    <string name="redLabel">Rojo</string>
+	<string name="greenLabel">Verde</string>
+	<string name="blueLabel">Azul</string>
+	<string name="cancelButton">Cancelar</string>
+	<string name="acceptButton">Aceptar</string>
 </resources>
