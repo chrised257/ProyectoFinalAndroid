@@ -52,7 +52,8 @@
             android:name=".LandVideoAct"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_land_video" >
-
+        </activity>
+		<activity
             android:name=".GenericDialog"
             android:label="@string/title_activity_generic_dialog"
             android:excludeFromRecents="true"
