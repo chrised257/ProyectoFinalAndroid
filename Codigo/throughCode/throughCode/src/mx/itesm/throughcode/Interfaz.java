@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -93,61 +92,75 @@ public class Interfaz extends Activity {
 	ArrayList<Integer> secuenciaInstrucciones;						//Guarda la secuencia de instrucciones a enviar 
 	List<ImageView> listCommands	;										//Lista de los comandos disponibles										
 	
-
+	//Constante para identificar intents de retorno.
+	private final int ID_REQUEST = 222;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_interfaz);
-		
-		///////////////////////////////////////////////////////////////////////////////////////////////////
-		//Para conectarse con el otro dispositivo
-		Bundle datos = getIntent().getExtras();
-		 RobotName = (String) datos.get("nombreRobot");
-		Toast.makeText(getApplicationContext(), "Conectando a " + RobotName + "...", Toast.LENGTH_SHORT).show();
-		 //Asynchronous thread for Bluetooth Connection
-			AsyncBluetoothConnection connect = new AsyncBluetoothConnection();  //Find Robot's name between devices
-			connect.execute();
-		 
-			setupBTMonitor(); //Enables btMonitor to check the connection's state
-		///////////////////////////////////////////////////////////////////////////////////////////////////
-			
-	   myCommandList = (ListView)findViewById(R.id.listView1);
-	   listCommandsToSend = (ListView)findViewById(R.id.listCommandsToSend);
-	   Button enviar = (Button)findViewById(R.id.botonEnviar);
-	   archivosText = (EditText)findViewById(R.id.archivosText);
-	   ///////////////////////////////////////////////////////////////////////////////////////////////////
-	   
-	   secuenciaInstrucciones = new ArrayList<Integer>();		//Inicializando la secuencia con que se enviarán las instruccines
 
+		// /////////////////////////////////////////////////////////////////////////////////////////////////
+		// Para conectarse con el otro dispositivo
+		Bundle datos = getIntent().getExtras();
+		RobotName = (String) datos.get("nombreRobot");
+		Toast.makeText(getApplicationContext(),
+				"Conectando a " + RobotName + "...", Toast.LENGTH_SHORT).show();
+		// Asynchronous thread for Bluetooth Connection
+		AsyncBluetoothConnection connect = new AsyncBluetoothConnection(); // Find
+																			// Robot's
+																			// name
+																			// between
+																			// devices
+		connect.execute();
+
+		setupBTMonitor(); // Enables btMonitor to check the connection's state
+		// /////////////////////////////////////////////////////////////////////////////////////////////////
+
+		myCommandList = (ListView) findViewById(R.id.listView1);
+		listCommandsToSend = (ListView) findViewById(R.id.listCommandsToSend);
+		Button enviar = (Button) findViewById(R.id.botonEnviar);
+		archivosText = (EditText) findViewById(R.id.archivosText);
+		// /////////////////////////////////////////////////////////////////////////////////////////////////
+
+		secuenciaInstrucciones = new ArrayList<Integer>(); // Inicializando la
+															// secuencia con que
+															// se enviarán las
+															// instruccines
 	   
-		final CommandsAdapter miAdaptador = new CommandsAdapter(getApplicationContext(), R.layout.row_comandos,getDataForListView(Interfaz.this));
-	   
-	    sendAdaptador = new InstruccionAdapter(getApplicationContext(),
-			   										R.layout.row_commands_tosend,instruccionesList );
-	    
-	   //Listener para botón enviar
-	   			enviar.setOnClickListener(new OnClickListener() {
-		
-					@Override
-					public void onClick(View v) {
-							handleConnected();
-							int i;
-							for (i=0 ; i < secuenciaInstrucciones.size() ; i++ )
-							{
-								sendData(secuenciaInstrucciones.get(i).toString());
-								try {
-									Toast.makeText(getApplicationContext(),
-											secuenciaInstrucciones.get(i).toString()/*is.read()*/ , Toast.LENGTH_SHORT).show();
-								} catch (NotFoundException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								
-							}
+		final CommandsAdapter miAdaptador = new CommandsAdapter(
+				getApplicationContext(), R.layout.row_comandos,
+				getDataForListView(Interfaz.this));
+
+		sendAdaptador = new InstruccionAdapter(getApplicationContext(),
+				R.layout.row_commands_tosend, instruccionesList);
+
+		// Listener para botón enviar
+		enviar.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				handleConnected();
+				int i;
+				for (i = 0; i < secuenciaInstrucciones.size(); i++) {
+					sendData(secuenciaInstrucciones.get(i).toString());
+					try {
+						Toast.makeText(getApplicationContext(),
+								secuenciaInstrucciones.get(i).toString()/*
+																		 * is.read
+																		 * ()
+																		 */,
+								Toast.LENGTH_SHORT).show();
+					} catch (NotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				});
-	
+
+				}
+			}
+		});
+
 	   	//Listener para lista de comandos disponibles
 		OnItemClickListener seleccion = new OnItemClickListener(){
 			
@@ -164,42 +177,42 @@ public class Interfaz extends Activity {
 								case 0:
 													addedView.setImageResource(R.drawable.frente);
 													comando.setSecuencia("0");
-													comando.setTipoInstruccion("Movimiento");
+													comando.setTipoInstruccion("move_fwd");
 													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 1:
 													addedView.setImageResource(R.drawable.atras);
-													comando.setTipoInstruccion("Movimiento");
+													comando.setTipoInstruccion("move_back");
 													comando.setSecuencia("0");
 													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 2:
 													addedView.setImageResource(R.drawable.izquierda);
-													comando.setTipoInstruccion("Movimiento");
+													comando.setTipoInstruccion("move_left");
 													comando.setSecuencia("0");
 													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 3:
 													addedView.setImageResource(R.drawable.derecha);
-													comando.setTipoInstruccion("Movimiento");
+													comando.setTipoInstruccion("move_right");
 													comando.setSecuencia("0");
 													comando.setIndicacionSecuencia("tiempo");
 											break;
 								case 4:
 													addedView.setImageResource(R.drawable.led);
-													comando.setTipoInstruccion("On/Off LEDs");
+													comando.setTipoInstruccion("led");
 													comando.setSecuencia("off, off, off, off");
 													comando.setIndicacionSecuencia("on/off, on/off, on/off, on/off");
 											break;
 								case 5:
 													addedView.setImageResource(R.drawable.rgb);
-													comando.setTipoInstruccion("Configuración led RGB");
+													comando.setTipoInstruccion("ledRGB");
 													comando.setSecuencia("0,0,0");
 													comando.setIndicacionSecuencia("R, G, B");
 											break;
 								case 6:
 													addedView.setImageResource(R.drawable.buzzer);
-													comando.setTipoInstruccion("Configuración Buzzer");
+													comando.setTipoInstruccion("buzz");
 													comando.setSecuencia("0,0");
 													comando.setIndicacionSecuencia("tiempo, frecuencia");
 											break;
@@ -222,11 +235,17 @@ public class Interfaz extends Activity {
 			
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Toast.makeText(Interfaz.this, "Comando por enviar",  Toast.LENGTH_SHORT).show();				
+				Toast.makeText(Interfaz.this, "Comando por enviar",  Toast.LENGTH_SHORT).show();
+				
+				//TODO: Intent
+				Intent intent = new Intent(Interfaz.this, GenericDialog.class);
+				String value = instruccionesList.get(position).getTipo();
+				intent.putExtra("instruction_type", value);
+				startActivityForResult(intent, ID_REQUEST);
 			}       	
 		};
 			       
-		//Listener para las instrucciones a enviar
+		//Listener para borrar instrucciones con un click largo
 			       OnItemLongClickListener borrar = new OnItemLongClickListener() {
 
 					@Override

@@ -32,6 +32,8 @@ package mx.itesm.throughcode;
 
 import java.util.List;
 
+import mx.itesm.throughcode.GenericDialog.ColorSeekBarListener;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -78,8 +80,26 @@ public class InstruccionAdapter extends ArrayAdapter< Comando> {
 		ImageView imagen = comando.getImage();
 		
 		
-		comandoImagen.setImageDrawable(imagen.getDrawable()); //ASIGNANDO DRAWABLE PROVENIENTE		
-		tipoInstruccion.setText(comando.getTipo());
+		comandoImagen.setImageDrawable(imagen.getDrawable()); //ASIGNANDO DRAWABLE PROVENIENTE
+		String nombreComando = "";
+		switch(comando.getTipo()){
+		case "move_fwd":
+		case "move_back":
+		case "move_left":
+		case "move_right":
+			nombreComando = "Movimiento";
+			break;
+		case "buzz":
+			nombreComando = "Configuración Buzzer";
+			break;
+		case "led":
+			nombreComando = "On/Off LEDs";
+			break;
+		case "ledRGB":
+			nombreComando = "Configuración LED RGB";
+			break;
+		}
+		tipoInstruccion.setText(nombreComando);
 		secuenciaDatos.setText(comando.getSecuencia());
 		secuenciaInstruccion.setText(comando.getIndicacionSecuencia());
 		return row;
