@@ -13,7 +13,7 @@ import android.webkit.WebView;
 
 public class HelpActivity extends Activity {
 	
-	String videoURL = "http://www.youtube.com/embed/DH6w8yh28mo";
+	String videoURL = "http://www.youtube.com/embed/dBzMuOjqaCY";
 	WebView mWebView = null;
 
 	@Override
