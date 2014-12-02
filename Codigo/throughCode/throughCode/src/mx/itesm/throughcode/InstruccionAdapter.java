@@ -79,7 +79,6 @@ public class InstruccionAdapter extends ArrayAdapter< Comando> {
 		Comando comando = listacomandos.get(position);
 		ImageView imagen = comando.getImage();
 		
-		
 		comandoImagen.setImageDrawable(imagen.getDrawable()); //ASIGNANDO DRAWABLE PROVENIENTE
 		String nombreComando = "";
 		switch(comando.getTipo()){

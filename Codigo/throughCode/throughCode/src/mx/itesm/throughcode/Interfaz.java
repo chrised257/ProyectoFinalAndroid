@@ -30,6 +30,9 @@
 
 package mx.itesm.throughcode;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -72,37 +75,45 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Interfaz extends Activity {
-	/*ACTIVITY*/
-	 ListView myCommandList;
-	 ListView listCommandsToSend;
-	 EditText archivosText;
-	 TextView controlInsTextView;
-	 int idDraggedData;
-	 
-	/*PARA EL BLUETOOTH*/
-	private BluetoothAdapter mBluetoothAdapter;	//Adapter for BT module
-	private BluetoothSocket socket;	//Connection's socket
-	private InputStream is;	//InputStream
-	private OutputStream os;	//Output Stream for BT Connection
-	private BroadcastReceiver btMonitor = null;					//Monitor que escucha todos los eventos Bluetooth
+	/* ACTIVITY */
+	ListView myCommandList;
+	ListView listCommandsToSend;
+	EditText archivosText;
+	TextView controlInsTextView;
+	int idDraggedData;
 
-	private boolean okConnection;										//Bandera de conexión establecida 1: si  ; 0:no
-	private String RobotName;							   						//String del nombre del Robot
-	private Set<BluetoothDevice> pairedDevices;			   	//Auxiliar para guardar los objetos Bluetooth device de los dispositivos pareados
+	/* PARA EL BLUETOOTH */
+	private BluetoothAdapter mBluetoothAdapter; // Adapter for BT module
+	private BluetoothSocket socket; // Connection's socket
+	private InputStream is; // InputStream
+	private OutputStream os; // Output Stream for BT Connection
+	private BroadcastReceiver btMonitor = null; // Monitor que escucha todos los
+												// eventos Bluetooth
+
+	private boolean okConnection; // Bandera de conexión establecida 1: si ;
+									// 0:no
+	private String RobotName; // String del nombre del Robot
+	private Set<BluetoothDevice> pairedDevices; // Auxiliar para guardar los
+												// objetos Bluetooth device de
+												// los dispositivos pareados
 	boolean searchDevices = false;
-	InstruccionAdapter  sendAdaptador;									//Adaptador del ListView para los comandos a enviar
-	List<Comando> instruccionesList;									//List donde están las instrucciones a enviar.
-	ArrayList<Integer> secuenciaInstrucciones;						//Guarda la secuencia de instrucciones a enviar 
-	List<ImageView> listCommands	;										//Lista de los comandos disponibles										
-	
-	//Constante para identificar intents de retorno.
+	InstruccionAdapter sendAdaptador; // Adaptador del ListView para los
+										// comandos a enviar
+	List<Comando> instruccionesList; // List donde están las instrucciones a
+										// enviar.
+	ArrayList<Integer> secuenciaInstrucciones; // Guarda la secuencia de
+												// instrucciones a enviar
+	List<ImageView> listCommands; // Lista de los comandos disponibles
+
+	// Constante para identificar intents de retorno.
 	private final int ID_REQUEST = 222;
-	//Posición en instruccionesList donde se almacenaran los datos de regreso del dialog.
+	// Posición en instruccionesList donde se almacenaran los datos de regreso
+	// del dialog.
 	private int mIntentPosition = -1;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_interfaz);
 
@@ -133,7 +144,7 @@ public class Interfaz extends Activity {
 															// secuencia con que
 															// se enviarán las
 															// instruccines
-	   
+
 		final CommandsAdapter miAdaptador = new CommandsAdapter(
 				getApplicationContext(), R.layout.row_comandos,
 				getDataForListView(Interfaz.this));
@@ -233,57 +244,57 @@ public class Interfaz extends Activity {
 			}
 
 		};
-			       
-	  //Listener para el list view de las instrucciones a enviar.
-		OnItemClickListener envio = new OnItemClickListener(){
-			
+
+		// Listener para el list view de las instrucciones a enviar.
+		OnItemClickListener envio = new OnItemClickListener() {
+
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Toast.makeText(Interfaz.this, "Comando por enviar",  Toast.LENGTH_SHORT).show();
-				
-				//TODO: Intent
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				// TODO: Intent
 				Intent intent = new Intent(Interfaz.this, GenericDialog.class);
 				String value = instruccionesList.get(position).getTipo();
 				intent.putExtra("instruction_type", value);
 				mIntentPosition = position;
 				startActivityForResult(intent, ID_REQUEST);
-			}       	
+			}
 		};
-			       
-		//Listener para borrar instrucciones con un click largo
-			       OnItemLongClickListener borrar = new OnItemLongClickListener() {
 
-					@Override
-					public boolean onItemLongClick(AdapterView<?> parent,
-							View view, int position, long id) {
-						instruccionesList.remove(position);
-						secuenciaInstrucciones.remove(position);
-						sendAdaptador.notifyDataSetChanged();
-						return true;
-					}
-				}; 
-			
-				
+		// Listener para borrar instrucciones con un click largo
+		OnItemLongClickListener borrar = new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				instruccionesList.remove(position);
+				secuenciaInstrucciones.remove(position);
+				sendAdaptador.notifyDataSetChanged();
+				return true;
+			}
+		};
+
 		listCommandsToSend.setOnItemLongClickListener(borrar);
-			       
-       listCommandsToSend.setOnItemClickListener(envio);
-       listCommandsToSend.setAdapter(sendAdaptador);
-       listCommandsToSend.setOnDragListener(new MyDragListener());
-		
+
+		listCommandsToSend.setOnItemClickListener(envio);
+		listCommandsToSend.setAdapter(sendAdaptador);
+		listCommandsToSend.setOnDragListener(new MyDragListener());
+
 		myCommandList.setOnItemClickListener(seleccion);
 		myCommandList.setAdapter(miAdaptador);
-	    
+
 	}
-	
-	//Recuperar los datos del intent resultante y almacenarlos en la posicion correspondiente.
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		if(requestCode == ID_REQUEST){
-			if(resultCode == RESULT_OK){
+
+	// Recuperar los datos del intent resultante y almacenarlos en la posicion
+	// correspondiente.
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ID_REQUEST) {
+			if (resultCode == RESULT_OK) {
 				Bundle bundle = data.getExtras();
 				Comando cmd = instruccionesList.get(mIntentPosition);
 				int duracion = 0, frecuencia = 20;
-				
-				switch(bundle.getString("instruction_type")){
+
+				switch (bundle.getString("instruction_type")) {
 				case "move_fwd":
 				case "move_back":
 				case "move_left":
@@ -297,10 +308,12 @@ public class Interfaz extends Activity {
 					frecuencia = bundle.getInt("frequency");
 					cmd.setTiempo(duracion);
 					cmd.setFrecuencia(frecuencia);
-					cmd.setSecuencia(Integer.toString(duracion) + "," + Integer.toString(frecuencia));
+					cmd.setSecuencia(Integer.toString(duracion) + ","
+							+ Integer.toString(frecuencia));
 					break;
 				case "led":
-					boolean [] ledsActivos = bundle.getBooleanArray("activeLeds");
+					boolean[] ledsActivos = bundle
+							.getBooleanArray("activeLeds");
 					int led1 = ledsActivos[0] ? 1 : 0;
 					int led2 = ledsActivos[1] ? 2 : 0;
 					int led3 = ledsActivos[2] ? 4 : 0;
@@ -308,10 +321,14 @@ public class Interfaz extends Activity {
 					int ledBitmask = led1 | led2 | led3 | led4;
 					cmd.setLED(ledBitmask);
 					String ledSecuencia = "";
-					ledSecuencia = ledSecuencia.concat(ledsActivos[0] ? "on," : "off,");
-					ledSecuencia = ledSecuencia.concat(ledsActivos[1] ? "on," : "off,");
-					ledSecuencia = ledSecuencia.concat(ledsActivos[2] ? "on," : "off,");
-					ledSecuencia = ledSecuencia.concat(ledsActivos[3] ? "on" : "off");
+					ledSecuencia = ledSecuencia.concat(ledsActivos[0] ? "on,"
+							: "off,");
+					ledSecuencia = ledSecuencia.concat(ledsActivos[1] ? "on,"
+							: "off,");
+					ledSecuencia = ledSecuencia.concat(ledsActivos[2] ? "on,"
+							: "off,");
+					ledSecuencia = ledSecuencia.concat(ledsActivos[3] ? "on"
+							: "off");
 					cmd.setSecuencia(ledSecuencia);
 					break;
 				case "ledRGB":
@@ -321,293 +338,476 @@ public class Interfaz extends Activity {
 					int azul = Color.blue(color);
 					cmd = instruccionesList.get(mIntentPosition);
 					cmd.setRGB(rojo, verde, azul);
-					cmd.setSecuencia(Integer.toString(rojo) + "," + Integer.toString(verde) + "," + Integer.toString(azul));
+					cmd.setSecuencia(Integer.toString(rojo) + ","
+							+ Integer.toString(verde) + ","
+							+ Integer.toString(azul));
 					break;
 				}
-				
-				//Actualizar lista
-				((BaseAdapter)listCommandsToSend.getAdapter()).notifyDataSetChanged();
+
+				// Actualizar lista
+				((BaseAdapter) listCommandsToSend.getAdapter())
+						.notifyDataSetChanged();
 			}
 		}
 	}
-	
-	public List<ImageView> getDataForListView(Context context)
-     {
-     	ImageView comando;
-     	listCommands = new ArrayList<ImageView>();
-     			
-     			instruccionesList = new ArrayList<Comando>();//Se inicializa la lista de instrucciones también
-     	
-     	comando = new ImageView(context);
-     	comando.setImageResource(R.drawable.frente);
-     	listCommands.add(comando);
-     	
-     	comando = new ImageView(context);
-     	comando.setImageResource(R.drawable.atras);
-     	listCommands.add(comando);
-     	
-     	comando = new ImageView(context);
-     	comando.setImageResource(R.drawable.izquierda);
-     	listCommands.add(comando);
-     	
-     	comando = new ImageView(context);
-     	comando.setImageResource(R.drawable.derecha);
-     	listCommands.add(comando);
-     	
-     	comando = new ImageView(context);
-     	comando.setImageResource(R.drawable.led);
-     	listCommands.add(comando);
-     	
-     	comando = new ImageView(context);
-     	comando.setImageResource(R.drawable.rgb);
-     	listCommands.add(comando);
-     	
-     	comando = new ImageView(context);
-     	comando.setImageResource(R.drawable.buzzer);
-     	listCommands.add(comando);
-     	
-     	return listCommands;
-     }
+
+	public List<ImageView> getDataForListView(Context context) {
+		ImageView comando;
+		listCommands = new ArrayList<ImageView>();
+
+		instruccionesList = new ArrayList<Comando>();// Se inicializa la lista
+														// de instrucciones
+														// también
+
+		comando = new ImageView(context);
+		comando.setImageResource(R.drawable.frente);
+		listCommands.add(comando);
+
+		comando = new ImageView(context);
+		comando.setImageResource(R.drawable.atras);
+		listCommands.add(comando);
+
+		comando = new ImageView(context);
+		comando.setImageResource(R.drawable.izquierda);
+		listCommands.add(comando);
+
+		comando = new ImageView(context);
+		comando.setImageResource(R.drawable.derecha);
+		listCommands.add(comando);
+
+		comando = new ImageView(context);
+		comando.setImageResource(R.drawable.led);
+		listCommands.add(comando);
+
+		comando = new ImageView(context);
+		comando.setImageResource(R.drawable.rgb);
+		listCommands.add(comando);
+
+		comando = new ImageView(context);
+		comando.setImageResource(R.drawable.buzzer);
+		listCommands.add(comando);
+
+		return listCommands;
+	}
 
 	private final class MyTouchListener implements OnTouchListener {
-		    
-			public boolean onTouch(View view, MotionEvent motionEvent) {
-				   
-				if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-						       
-				    			ClipData data = ClipData.newPlainText("", "");
-						        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-						        view.startDrag(data, shadowBuilder, view, 0);
-						        view.setVisibility(View.VISIBLE);
-						        
-						         return true;
-				      } 
-				      
-				      else {
-				        return false;
-				      }
-		    	}
-		 }
-	  
-	  class MyDragListener implements View.OnDragListener {
 
-			private int action;
+		public boolean onTouch(View view, MotionEvent motionEvent) {
 
-		    public boolean onDrag(View v, DragEvent event) {
-		    	action = event.getAction();
-		    	
-		    	switch (action) {
-		    	
-		    	case DragEvent.ACTION_DRAG_STARTED:
-		    	  		Log.d("ACTION_DRAG_STARTED", "Empecé mi acción de drag");
-		    		break;
-		      case DragEvent.ACTION_DRAG_ENTERED:
-		    	  		Log.d("ACTION_DRAG_ENTERED", "Entré a mi acción de drag.");
-		        	break;
-				case DragEvent.ACTION_DRAG_EXITED:
-		    	  		Log.d("ACTION_DRAG_EXITED", "Salí de mi acción de drag.");
-		        break;
-		    	case DragEvent.ACTION_DROP:
-					        /////////////////////////////////////
-					    	////SECCION DEL DRAG AND DROP////
-					    	////////////////////////////////////
-		    	  
-		    	  ImageView addedView = new ImageView(getApplicationContext());
-		    	  Comando comando = new Comando();
-		    	String identificador = "atras";
-		    	  
-					switch(identificador)
-					{
-					case "frente":
-										addedView.setImageResource(R.drawable.frente);
-								break;
-					case "atras":
-										addedView.setImageResource(R.drawable.atras);
-								break;
-					case "izquierda":
-										addedView.setImageResource(R.drawable.izquierda);
-								break;
-					case "derecha":
-										addedView.setImageResource(R.drawable.derecha);
-								break;
-					case "led":
-										addedView.setImageResource(R.drawable.led);
-								break;
-					case "rgb":
-										addedView.setImageResource(R.drawable.rgb);
-								break;
-					case "buzzer":
-										addedView.setImageResource(R.drawable.buzzer);
-								break;
-								
-							default:
-								       addedView.setImageResource(R.drawable.ic_launcher);
-								break;
-					}
-					comando.setImage(addedView);
-					instruccionesList.add(comando);
-		    	  sendAdaptador.notifyDataSetChanged();
-					
-					//secuenciaInstrucciones.add(identificador);
-					Toast.makeText(Interfaz.this,  identificador  , Toast.LENGTH_SHORT).show();	
+			if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 
-		        break;
-		      case DragEvent.ACTION_DRAG_ENDED:
-		    	  		Log.d("ACTION_DRAG_ENDED", "Terminé de mover mi objeto.");
-		    	  		
-		      default:
-		        break;
-		      }
-		      return true;
-		    }
-		  }
-	  
-	  /*PARA GENERAR EL MENU DE GUARDAR Y ABRIR*/
-	  public boolean onCreateOptionsMenu(Menu menu)
-	    {
-	    	MenuInflater menuInflater = getMenuInflater();
-	    	menuInflater.inflate(R.menu.menu_dispositivos,menu);
-	    	return true;
-	    }
-	  
-	  /*CUANDO ES SELECCIONADO CADA OPCION DE MENU*/
-	  public boolean onOptionsItemSelected(MenuItem item)
-	    {
-	    	//Log.e("onOptionSelected",item.toString());
-	    	switch(item.getItemId())
-	    	{
-	    	   case R.id.open:
-	    		   Toast.makeText(Interfaz.this,"Abriendo...", Toast.LENGTH_SHORT).show();
-	    		return true;
-	   	
-	    	   case R.id.save:
-	    		   Toast.makeText(Interfaz.this,"Guardando...", Toast.LENGTH_SHORT).show();
-	    		   return true;
-	    	   
-	    	   case R.id.delete:
-	    		   Toast.makeText(Interfaz.this,"Borrando...", Toast.LENGTH_SHORT).show();
-	    		   return true;
-	    		      
-	    	   default:
-	    		   return super.onOptionsItemSelected(item);
-	    	}
-	    }
-	  
-	  /*///////////////////////////////////////////////////////////////
-	   * EMPIEZA CÓDIGO DEL BLUETOOTH PARA REALIZAR LA CONEXIÓN.///
-	   *///////////////////////////////////////////////////////////////
-	  
-	  /*
-		 * Function that creates the interface to know BT has connected successfully
-		 */
-		private void setupBTMonitor() {
-			btMonitor = new BroadcastReceiver() {
-				@Override
-				public void onReceive(Context context, Intent intent) {
-					if (intent.getAction().equals(
-							"android.bluetooth.device.action.ACL_CONNECTED")) {
-						handleConnected();
-					}
-					if (intent.getAction().equals(
-							"android.bluetooth.device.action.ACL_DISCONNECTED")) {
-							handleDisconnected();
-					}
-				}
-			};
-		}
-	/*
-	 * When  devices are connected (Devices are now really connected)
-	 */
-		private void handleConnected() {
-			try {
-				is = socket.getInputStream();
-				os = socket.getOutputStream();
-				
-				okConnection = true;
-			
-			} catch (Exception e) {
-				is = null;
-				os = null;
-			}
-		}
-		
-		private void handleDisconnected(){
-			try {
-				socket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		/*
-		 * Function that sends data to the Robot
-		 */
-		void sendData(String Dato) {
-			try {
-				if (okConnection)
-					os.write(Dato.getBytes());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-	  
-	  /*
-		 * Find Robot between all pairedDevices
-		 */
-		
-		public void findRobot() {
-			try {
-				mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-				 pairedDevices = mBluetoothAdapter.getBondedDevices();
-				Iterator<BluetoothDevice> it = pairedDevices.iterator();
-				while (it.hasNext()) {
-					BluetoothDevice bd = it.next();
-					if (bd.getName().equalsIgnoreCase(RobotName)) {
-						connectToRobot(bd);
-						return;
-					}
-				}
-			} catch (Exception e) {
-				Log.e("Find-Robot-Function", "Failed in findRobot() " + e.getMessage());
-			}
-		}
-		
-		/*
-		 * To establish connection with the selected device. Return true if connection was successful and false if it wasn't
-		 */
-		
-		private boolean connectToRobot(BluetoothDevice bd) {
-			try {
-				socket = bd.createRfcommSocketToServiceRecord(UUID
-						.fromString("00001101-0000-1000-8000-00805F9B34FB"));
-				socket.connect();
-				Log.e("CONNECTION A ROBOT","Estoy por hacer true");
+				ClipData data = ClipData.newPlainText("", "");
+				View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
+						view);
+				view.startDrag(data, shadowBuilder, view, 0);
+				view.setVisibility(View.VISIBLE);
+
 				return true;
-			} catch (Exception e) {
-				Log.e("CONNECTION TO ROBOT",
-						"Error interacting with remote device [" + e.getMessage() + "]");
+			}
+
+			else {
 				return false;
 			}
 		}
+	}
 
-		//////////////////////////////////////////////////////////////////////////////////////
-		/////////////////CLASE PARA LA CONEXION BLUETOOTH EN SEGUNDO PLANO////////////
-		/////////////////////////////////////////////////////////////////////////////////////
+	class MyDragListener implements View.OnDragListener {
+
+		private int action;
+
+		public boolean onDrag(View v, DragEvent event) {
+			action = event.getAction();
+
+			switch (action) {
+
+			case DragEvent.ACTION_DRAG_STARTED:
+				Log.d("ACTION_DRAG_STARTED", "Empecé mi acción de drag");
+				break;
+			case DragEvent.ACTION_DRAG_ENTERED:
+				Log.d("ACTION_DRAG_ENTERED", "Entré a mi acción de drag.");
+				break;
+			case DragEvent.ACTION_DRAG_EXITED:
+				Log.d("ACTION_DRAG_EXITED", "Salí de mi acción de drag.");
+				break;
+			case DragEvent.ACTION_DROP:
+				// ///////////////////////////////////
+				// //SECCION DEL DRAG AND DROP////
+				// //////////////////////////////////
+
+				ImageView addedView = new ImageView(getApplicationContext());
+				Comando comando = new Comando();
+				String identificador = "atras";
+
+				switch (identificador) {
+				case "frente":
+					addedView.setImageResource(R.drawable.frente);
+					break;
+				case "atras":
+					addedView.setImageResource(R.drawable.atras);
+					break;
+				case "izquierda":
+					addedView.setImageResource(R.drawable.izquierda);
+					break;
+				case "derecha":
+					addedView.setImageResource(R.drawable.derecha);
+					break;
+				case "led":
+					addedView.setImageResource(R.drawable.led);
+					break;
+				case "rgb":
+					addedView.setImageResource(R.drawable.rgb);
+					break;
+				case "buzzer":
+					addedView.setImageResource(R.drawable.buzzer);
+					break;
+
+				default:
+					addedView.setImageResource(R.drawable.ic_launcher);
+					break;
+				}
+				comando.setImage(addedView);
+				instruccionesList.add(comando);
+				sendAdaptador.notifyDataSetChanged();
+
+				// secuenciaInstrucciones.add(identificador);
+				Toast.makeText(Interfaz.this, identificador, Toast.LENGTH_SHORT)
+						.show();
+
+				break;
+			case DragEvent.ACTION_DRAG_ENDED:
+				Log.d("ACTION_DRAG_ENDED", "Terminé de mover mi objeto.");
+
+			default:
+				break;
+			}
+			return true;
+		}
+	}
+
+	/* PARA GENERAR EL MENU DE GUARDAR Y ABRIR */
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater menuInflater = getMenuInflater();
+		menuInflater.inflate(R.menu.menu_dispositivos, menu);
+		return true;
+	}
+
+	/* CUANDO ES SELECCIONADO CADA OPCION DE MENU */
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Log.e("onOptionSelected",item.toString());
+		String filename = archivosText.getText().toString();
+		String fileContents = null;
 		
-						private class AsyncBluetoothConnection extends AsyncTask<Void, Integer, Boolean> {
-							
-									@Override
-									protected Boolean doInBackground(Void... params) {
+		switch (item.getItemId()) {
+		case R.id.open:
+			FileInputStream istream = null;
+			List<Comando> instruccionesCargadas = new ArrayList<Comando>();
+			Comando comando = new Comando();
+			 
+			try{
+				istream = openFileInput(filename);
+				int bufferSize = istream.available();
+				byte [] buffer = new byte [bufferSize];
+				istream.read(buffer);
+				fileContents = new String(buffer);
+				
+				//TODO: Interpretar archivo
+				String [] cmds = fileContents.split("#");
+				for(int i = 0; i < cmds.length; i++){
+					String[] elementos = cmds[i].split(",");
+					comando = new Comando();
+					ImageView addedView = new ImageView(getApplicationContext());
+					for(int j = 0; j < elementos.length; j++){
+						String tipo = elementos[0];
+						comando.setTipoInstruccion(tipo);
+						int tiempo = 0, frecuencia = 20, ledBitmask = 0;
+						
+						switch (tipo) {
+						case "move_fwd":
+							addedView.setImageResource(R.drawable.frente);
+							tiempo = Integer.parseInt(elementos[1]);
+							comando.setTiempo(tiempo);
+							comando.setIndicacionSecuencia("tiempo");
+							comando.setSecuencia(Integer.toString(tiempo));
+							break;
+						case "move_back":
+							addedView.setImageResource(R.drawable.atras);
+							tiempo = Integer.parseInt(elementos[1]);
+							comando.setTiempo(tiempo);
+							comando.setIndicacionSecuencia("tiempo");
+							comando.setSecuencia(Integer.toString(tiempo));
+							break;
+						case "move_left":
+							addedView.setImageResource(R.drawable.izquierda);
+							tiempo = Integer.parseInt(elementos[1]);
+							comando.setTiempo(tiempo);
+							comando.setIndicacionSecuencia("tiempo");
+							comando.setSecuencia(Integer.toString(tiempo));
+							break;
+						case "move_right":
+							addedView.setImageResource(R.drawable.derecha);
+							tiempo = Integer.parseInt(elementos[1]);
+							comando.setTiempo(tiempo);
+							comando.setIndicacionSecuencia("tiempo");
+							comando.setSecuencia(Integer.toString(tiempo));
+							break;
+						case "buzz":
+							addedView.setImageResource(R.drawable.buzzer);
+							tiempo = Integer.parseInt(elementos[1]);
+							frecuencia = Integer.parseInt(elementos[2]);
+							comando.setTiempo(tiempo);
+							comando.setFrecuencia(frecuencia);
+							comando.setIndicacionSecuencia("tiempo, frecuencia");
+							comando.setSecuencia(Integer.toString(tiempo) + ","
+									+ Integer.toString(frecuencia));
+							break;
+						case "led":
+							addedView.setImageResource(R.drawable.led);
+							ledBitmask = Integer.parseInt(elementos[1]);
+							comando.setLED(ledBitmask);
+							comando.setIndicacionSecuencia("on/off, on/off, on/off, on/off");
+							int led1 = ledBitmask & 1;
+							int led2 = ledBitmask & 2;
+							int led3 = ledBitmask & 4;
+							int led4 = ledBitmask & 8;
+							String ledSecuencia = "";
+							ledSecuencia = ledSecuencia.concat(led1 == 1 ? "on,"
+									: "off,");
+							ledSecuencia = ledSecuencia.concat(led2 == 2? "on,"
+									: "off,");
+							ledSecuencia = ledSecuencia.concat(led3 == 4 ? "on,"
+									: "off,");
+							ledSecuencia = ledSecuencia.concat(led4 == 8? "on"
+									: "off");
+							comando.setSecuencia(ledSecuencia);
+							break;
+						case "ledRGB":
+							addedView.setImageResource(R.drawable.rgb);
+							int r = Integer.parseInt(elementos[1]);
+							int g = Integer.parseInt(elementos[2]);
+							int b = Integer.parseInt(elementos[3]);
+							comando.setRGB(r, g, b);
+							comando.setIndicacionSecuencia("R, G, B");
+							comando.setSecuencia(Integer.toString(r) + ","
+									+ Integer.toString(g) + ","
+									+ Integer.toString(b));
+							break;
+						}
+					}
+					comando.setImage(addedView);
+					instruccionesCargadas.add(comando);
+				}
+				
+				istream.close();
+				instruccionesList = instruccionesCargadas;
+				sendAdaptador = new InstruccionAdapter(getApplicationContext(),
+						R.layout.row_commands_tosend, instruccionesList);
+				listCommandsToSend.setAdapter(sendAdaptador);
+				Toast.makeText(Interfaz.this, "Se abrió el archivo " + filename, Toast.LENGTH_LONG)
+				.show();
+			}
+			catch (FileNotFoundException e){
+				Toast.makeText(Interfaz.this, "No se encontró el archivo " + filename, Toast.LENGTH_LONG)
+				.show();
+				return false;
+			}
+			catch (IOException e){
+				Toast.makeText(Interfaz.this, "Error al cargar los datos del archivo.", Toast.LENGTH_LONG)
+				.show();
+				return false;
+			}
 			
-										findRobot();
-										
-										return true;
-									}
-									
-									@Override
-									protected void onPreExecute(){
-									}
-					    }
+			return true;
+			
+		case R.id.save:
+			FileOutputStream ostream = null;
+			try{
+				ostream = openFileOutput(filename, Context.MODE_PRIVATE);
+				fileContents = "";
+				//TODO: Guardar archivo
+				for( int i = 0; i < instruccionesList.size(); i++ ){
+					fileContents = fileContents.concat(instruccionesList.get(i).getTipo());
+					
+					switch (instruccionesList.get(i).getTipo()) {
+					case "move_fwd":
+					case "move_back":
+					case "move_left":
+					case "move_right":
+						fileContents = fileContents.concat("," + instruccionesList.get(i).getTiempo());
+						break;
+					case "buzz":
+						fileContents = fileContents.concat("," + instruccionesList.get(i).getTiempo());
+						fileContents = fileContents.concat("," + instruccionesList.get(i).getFrecuencia());
+						break;
+					case "led":
+						fileContents = fileContents.concat("," + instruccionesList.get(i).getLED());
+						break;
+					case "ledRGB":
+						fileContents = fileContents.concat("," + instruccionesList.get(i).getR());
+						fileContents = fileContents.concat("," + instruccionesList.get(i).getG());
+						fileContents = fileContents.concat("," + instruccionesList.get(i).getB());
+						break;
+					}
+					
+					//Aun no es el ultimo de los elementos de la lista, agregar separador
+					if ( !(i + 1 >= instruccionesList.size()) )
+						fileContents = fileContents.concat("#");
+				}
+				
+				ostream.write(fileContents.getBytes());
+				ostream.close();
+				Toast.makeText(Interfaz.this, "Se guardó el archivo " + filename, Toast.LENGTH_LONG)
+				.show();
+			}
+			catch (FileNotFoundException e){
+				Toast.makeText(Interfaz.this, "No se encontró el archivo " + filename, Toast.LENGTH_LONG)
+				.show();
+				return false;
+			}
+			catch (IOException e){
+				Toast.makeText(Interfaz.this, "Error al guardar los datos del archivo.", Toast.LENGTH_LONG)
+				.show();
+				return false;
+			}
+			return true;
+
+		case R.id.delete:
+			if(deleteFile(filename)){
+				Toast.makeText(Interfaz.this, "Se ha borrado el archivo " + filename, Toast.LENGTH_LONG)
+				.show();
+			}
+			else{
+				Toast.makeText(Interfaz.this, "No se encontró el archivo " + filename, Toast.LENGTH_LONG)
+				.show();
+			}
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	/*
+	 * ///////////////////////////////////////////////////////////////
+	 *  EMPIEZA CÓDIGO DEL BLUETOOTH PARA REALIZAR LA CONEXIÓN.///
+	 */// ////////////////////////////////////////////////////////////
+
+	/*
+	 * Function that creates the interface to know BT has connected successfully
+	 */
+	private void setupBTMonitor() {
+		btMonitor = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if (intent.getAction().equals(
+						"android.bluetooth.device.action.ACL_CONNECTED")) {
+					handleConnected();
+				}
+				if (intent.getAction().equals(
+						"android.bluetooth.device.action.ACL_DISCONNECTED")) {
+					handleDisconnected();
+				}
+			}
+		};
+	}
+
+	/*
+	 * When devices are connected (Devices are now really connected)
+	 */
+	private void handleConnected() {
+		try {
+			is = socket.getInputStream();
+			os = socket.getOutputStream();
+
+			okConnection = true;
+
+		} catch (Exception e) {
+			is = null;
+			os = null;
+		}
+	}
+
+	private void handleDisconnected() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * Function that sends data to the Robot
+	 */
+	void sendData(String Dato) {
+		try {
+			if (okConnection)
+				os.write(Dato.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * Find Robot between all pairedDevices
+	 */
+
+	public void findRobot() {
+		try {
+			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+			pairedDevices = mBluetoothAdapter.getBondedDevices();
+			Iterator<BluetoothDevice> it = pairedDevices.iterator();
+			while (it.hasNext()) {
+				BluetoothDevice bd = it.next();
+				if (bd.getName().equalsIgnoreCase(RobotName)) {
+					connectToRobot(bd);
+					return;
+				}
+			}
+		} catch (Exception e) {
+			Log.e("Find-Robot-Function",
+					"Failed in findRobot() " + e.getMessage());
+		}
+	}
+
+	/*
+	 * To establish connection with the selected device. Return true if
+	 * connection was successful and false if it wasn't
+	 */
+
+	private boolean connectToRobot(BluetoothDevice bd) {
+		try {
+			socket = bd.createRfcommSocketToServiceRecord(UUID
+					.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+			socket.connect();
+			Log.e("CONNECTION A ROBOT", "Estoy por hacer true");
+			return true;
+		} catch (Exception e) {
+			Log.e("CONNECTION TO ROBOT",
+					"Error interacting with remote device [" + e.getMessage()
+							+ "]");
+			return false;
+		}
+	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////
+	// ///////////////CLASE PARA LA CONEXION BLUETOOTH EN SEGUNDO
+	// PLANO////////////
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	private class AsyncBluetoothConnection extends
+			AsyncTask<Void, Integer, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Void... params) {
+
+			findRobot();
+
+			return true;
+		}
+
+		@Override
+		protected void onPreExecute() {
+		}
+	}
 }
