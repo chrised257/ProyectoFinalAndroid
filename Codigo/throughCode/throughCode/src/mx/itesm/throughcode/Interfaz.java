@@ -158,21 +158,45 @@ public class Interfaz extends Activity {
 			@Override
 			public void onClick(View v) {
 				handleConnected();
-				int i;
-				for (i = 0; i < secuenciaInstrucciones.size(); i++) {
-					sendData(secuenciaInstrucciones.get(i).toString());
-					try {
-						Toast.makeText(getApplicationContext(),
-								secuenciaInstrucciones.get(i).toString()/*
-																		 * is.read
-																		 * ()
-																		 */,
-								Toast.LENGTH_SHORT).show();
-					} catch (NotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				String tipo;
+				for(int i =0; i<instruccionesList.size(); i++)
+				{
+					tipo = instruccionesList.get(i).getTipo();
+					switch(tipo)
+					{
+					case "move_fwd":
+					case "move_back":
+					case "move_left":
+					case "move_right":
+															sendData(instruccionesList.get(i).getTipo());
+															sendData(String.valueOf(instruccionesList.get(i).getTiempo()));
+															Log.d("ROBOT",instruccionesList.get(i).getTipo());
+															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getTiempo()));
+						break;
+					case "buzz":					
+															sendData(instruccionesList.get(i).getTipo());
+															sendData(String.valueOf(instruccionesList.get(i).getTiempo()));
+															sendData(String.valueOf(instruccionesList.get(i).getFrecuencia()));
+															instruccionesList.get(i).getTipo();
+															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getTiempo()));
+															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getFrecuencia()));
+						break;
+					case "led":
+															sendData(instruccionesList.get(i).getTipo());
+															Log.d("ROBOT",instruccionesList.get(i).getTipo());
+															sendData(String.valueOf(instruccionesList.get(i).getLED()));
+						break;
+					case "ledRGB":
+															sendData(instruccionesList.get(i).getTipo());
+															sendData(String.valueOf(instruccionesList.get(i).getR()));
+															sendData(String.valueOf(instruccionesList.get(i).getG()));
+															sendData(String.valueOf(instruccionesList.get(i).getB()));
+															Log.d("ROBOT",instruccionesList.get(i).getTipo());
+															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getR()));
+															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getG()));
+															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getB()));
+						break;
 					}
-
 				}
 			}
 		});
@@ -268,7 +292,7 @@ public class Interfaz extends Activity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				instruccionesList.remove(position);
-				secuenciaInstrucciones.remove(position);
+				//secuenciaInstrucciones.remove(position);
 				sendAdaptador.notifyDataSetChanged();
 				return true;
 			}
