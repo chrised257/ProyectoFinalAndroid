@@ -132,6 +132,7 @@ public class Interfaz extends Activity {
 		connect.execute();
 
 		setupBTMonitor(); // Enables btMonitor to check the connection's state
+		
 		// /////////////////////////////////////////////////////////////////////////////////////////////////
 
 		myCommandList = (ListView) findViewById(R.id.listView1);
@@ -159,38 +160,57 @@ public class Interfaz extends Activity {
 			public void onClick(View v) {
 				handleConnected();
 				String tipo;
+				sendData(String.valueOf(instruccionesList.size()));
 				for(int i =0; i<instruccionesList.size(); i++)
 				{
 					tipo = instruccionesList.get(i).getTipo();
 					switch(tipo)
 					{
-					case "move_fwd":
+					case "move_fwd":		
+															sendData("<mf");
+															sendData(String.valueOf(instruccionesList.get(i).getTiempo()));
+															sendData(">");
+															break;
+					case "move_right":		
+															sendData("<mr");
+															sendData(String.valueOf(instruccionesList.get(i).getTiempo()));
+															sendData(">");
+															break;
 					case "move_back":
+															sendData("<mb");
+															sendData(String.valueOf(instruccionesList.get(i).getTiempo()));
+															sendData(">");
+															break;
 					case "move_left":
-					case "move_right":
-															sendData(instruccionesList.get(i).getTipo());
+															sendData("<ml");
 															sendData(String.valueOf(instruccionesList.get(i).getTiempo()));
 															Log.d("ROBOT",instruccionesList.get(i).getTipo());
 															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getTiempo()));
+															sendData(">");
 						break;
 					case "buzz":					
-															sendData(instruccionesList.get(i).getTipo());
+															sendData("<bz");
 															sendData(String.valueOf(instruccionesList.get(i).getTiempo()));
+															sendData(".");
 															sendData(String.valueOf(instruccionesList.get(i).getFrecuencia()));
-															instruccionesList.get(i).getTipo();
 															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getTiempo()));
 															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getFrecuencia()));
+															sendData(">");
 						break;
 					case "led":
-															sendData(instruccionesList.get(i).getTipo());
+															sendData("<ld");
 															Log.d("ROBOT",instruccionesList.get(i).getTipo());
 															sendData(String.valueOf(instruccionesList.get(i).getLED()));
+															sendData(">");
 						break;
 					case "ledRGB":
-															sendData(instruccionesList.get(i).getTipo());
+															sendData("<lr");
 															sendData(String.valueOf(instruccionesList.get(i).getR()));
+															sendData(".");
 															sendData(String.valueOf(instruccionesList.get(i).getG()));
+															sendData(".");
 															sendData(String.valueOf(instruccionesList.get(i).getB()));
+															sendData(">");
 															Log.d("ROBOT",instruccionesList.get(i).getTipo());
 															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getR()));
 															Log.d("ROBOT",String.valueOf(instruccionesList.get(i).getG()));
@@ -198,6 +218,7 @@ public class Interfaz extends Activity {
 						break;
 					}
 				}
+				sendData(String.valueOf('\n'));
 			}
 		});
 
@@ -804,12 +825,14 @@ public class Interfaz extends Activity {
 			socket = bd.createRfcommSocketToServiceRecord(UUID
 					.fromString("00001101-0000-1000-8000-00805F9B34FB"));
 			socket.connect();
+			okConnection=true;
 			Log.e("CONNECTION A ROBOT", "Estoy por hacer true");
 			return true;
 		} catch (Exception e) {
 			Log.e("CONNECTION TO ROBOT",
 					"Error interacting with remote device [" + e.getMessage()
 							+ "]");
+			okConnection=false;
 			return false;
 		}
 	}
